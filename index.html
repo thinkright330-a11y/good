@@ -6,14 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>เอกสาร ฝอ.งานป้องกันปราบปราม,งานยุทธศาสตร์ บก.ปอท.</title>
     
-    <!-- Fonts: ใช้ Kanit สำหรับหัวข้อ และ Prompt สำหรับเนื้อหาเพื่อให้อ่านง่ายทันสมัย -->
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600;700;800;900&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <script>
@@ -48,213 +43,115 @@
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #1e325c; border-radius: 10px; }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #FFC72C; }
-        
         table { border-collapse: collapse; }
         .fade-in { animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(15px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
         .shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
-        @keyframes shake {
-            10%, 90% { transform: translate3d(-1px, 0, 0); }
-            20%, 80% { transform: translate3d(2px, 0, 0); }
-            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
-            40%, 60% { transform: translate3d(4px, 0, 0); }
-        }
-
-        select.custom-select {
-            cursor: pointer;
-            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2394a3b8' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
-            background-position: right 0.75rem center;
-            background-repeat: no-repeat;
-            background-size: 1.2em 1.2em;
-            padding-right: 2.5rem;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            appearance: none;
-        }
-        
-        .glass-panel {
-            background: rgba(17, 34, 64, 0.7);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
+        @keyframes shake { 10%, 90% { transform: translate3d(-1px, 0, 0); } 20%, 80% { transform: translate3d(2px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-4px, 0, 0); } 40%, 60% { transform: translate3d(4px, 0, 0); } }
+        select.custom-select { cursor: pointer; background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2394a3b8' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e"); background-position: right 0.75rem center; background-repeat: no-repeat; background-size: 1.2em 1.2em; padding-right: 2.5rem; -webkit-appearance: none; -moz-appearance: none; appearance: none; }
+        .glass-panel { background: rgba(17, 34, 64, 0.7); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.05); }
         input[type="date"] { cursor: pointer; color-scheme: dark; }
-
-        /* Loader สำหรับตอนดึงข้อมูล */
-        .loader {
-            border: 4px solid rgba(255, 255, 255, 0.1);
-            border-left-color: #FFC72C;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-        }
+        .loader { border: 4px solid rgba(255, 255, 255, 0.1); border-left-color: #FFC72C; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
-
 <body class="bg-dark-bg font-sans text-slate-300 h-screen flex overflow-hidden selection:bg-cib-yellow selection:text-black">
-
     <div class="absolute inset-0 z-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-[#112240] via-dark-bg to-[#02050a] pointer-events-none"></div>
 
-    <!-- ================= หน้าจอเข้าสู่ระบบ (PIN Code) ================= -->
     <div id="pin-screen" class="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-dark-bg/95 backdrop-blur-xl transition-opacity duration-500 p-4">
         <div class="flex gap-4 md:gap-5 mb-8">
-            <img src="cib-logo.png" alt="CIB Logo" class="w-20 h-20 md:w-24 md:h-24 rounded-2xl md:rounded-[1.5rem] shadow-glow-blue border border-[#1e325c] object-cover bg-dark-bg" onerror="this.style.display='none'">
-            <img src="tcsd-logo.png" alt="TCSD Logo" class="w-20 h-20 md:w-24 md:h-24 rounded-2xl md:rounded-[1.5rem] shadow-glow-blue border border-[#1e325c] object-contain bg-white" onerror="this.style.display='none'">
+            <img src="cib-logo.png" alt="CIB" class="w-20 h-20 md:w-24 md:h-24 rounded-2xl shadow-glow-blue border border-[#1e325c] object-cover bg-dark-bg" onerror="this.style.display='none'">
+            <img src="tcsd-logo.png" alt="TCSD" class="w-20 h-20 md:w-24 md:h-24 rounded-2xl shadow-glow-blue border border-[#1e325c] object-contain bg-white" onerror="this.style.display='none'">
         </div>
-        
         <div id="pin-box" class="glass-panel p-6 md:p-10 rounded-3xl shadow-[0_0_50px_rgba(0,0,0,0.5)] border border-white/10 flex flex-col items-center w-full max-w-sm transform transition-all relative overflow-hidden">
             <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-cib-yellow to-transparent opacity-50"></div>
-            <div class="w-14 h-14 md:w-16 md:h-16 bg-cib-yellow/10 rounded-2xl flex items-center justify-center mb-5 border border-cib-yellow/20">
-                <i data-lucide="lock" class="w-7 h-7 md:w-8 md:h-8 text-cib-yellow"></i>
-            </div>
+            <div class="w-14 h-14 md:w-16 md:h-16 bg-cib-yellow/10 rounded-2xl flex items-center justify-center mb-5 border border-cib-yellow/20"><i data-lucide="lock" class="w-7 h-7 text-cib-yellow"></i></div>
             <h2 class="text-xl md:text-2xl font-heading font-bold text-white mb-2 tracking-wide">เข้าสู่ระบบ ฝอ.</h2>
             <p class="text-xs md:text-sm text-slate-400 mb-8 font-light text-center">กรุณาป้อนรหัส PIN 4 หลัก<br/>เพื่อเข้าใช้งานระบบจัดการเอกสาร</p>
-            
             <div class="flex gap-3 md:gap-4 mb-6">
-                <input type="password" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="pin-input w-12 h-14 md:w-14 md:h-16 text-center text-2xl md:text-3xl font-bold text-white bg-[#0c162d] border border-dark-border rounded-xl focus:border-cib-yellow focus:ring-2 focus:ring-cib-yellow/50 outline-none transition-all shadow-inner placeholder-transparent" placeholder="*">
-                <input type="password" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="pin-input w-12 h-14 md:w-14 md:h-16 text-center text-2xl md:text-3xl font-bold text-white bg-[#0c162d] border border-dark-border rounded-xl focus:border-cib-yellow focus:ring-2 focus:ring-cib-yellow/50 outline-none transition-all shadow-inner placeholder-transparent" placeholder="*">
-                <input type="password" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="pin-input w-12 h-14 md:w-14 md:h-16 text-center text-2xl md:text-3xl font-bold text-white bg-[#0c162d] border border-dark-border rounded-xl focus:border-cib-yellow focus:ring-2 focus:ring-cib-yellow/50 outline-none transition-all shadow-inner placeholder-transparent" placeholder="*">
-                <input type="password" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="pin-input w-12 h-14 md:w-14 md:h-16 text-center text-2xl md:text-3xl font-bold text-white bg-[#0c162d] border border-dark-border rounded-xl focus:border-cib-yellow focus:ring-2 focus:ring-cib-yellow/50 outline-none transition-all shadow-inner placeholder-transparent" placeholder="*">
+                <input type="password" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="pin-input w-12 h-14 text-center text-2xl font-bold text-white bg-[#0c162d] border border-dark-border rounded-xl focus:border-cib-yellow focus:ring-2 outline-none placeholder-transparent" placeholder="*">
+                <input type="password" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="pin-input w-12 h-14 text-center text-2xl font-bold text-white bg-[#0c162d] border border-dark-border rounded-xl focus:border-cib-yellow focus:ring-2 outline-none placeholder-transparent" placeholder="*">
+                <input type="password" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="pin-input w-12 h-14 text-center text-2xl font-bold text-white bg-[#0c162d] border border-dark-border rounded-xl focus:border-cib-yellow focus:ring-2 outline-none placeholder-transparent" placeholder="*">
+                <input type="password" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="pin-input w-12 h-14 text-center text-2xl font-bold text-white bg-[#0c162d] border border-dark-border rounded-xl focus:border-cib-yellow focus:ring-2 outline-none placeholder-transparent" placeholder="*">
             </div>
-            <p id="pin-error" class="text-rose-500 text-sm font-medium h-5 opacity-0 transition-opacity">รหัส PIN ไม่ถูกต้อง ลองใหม่อีกครั้ง</p>
+            <p id="pin-error" class="text-rose-500 text-sm font-medium h-5 opacity-0 transition-opacity">รหัส PIN ไม่ถูกต้อง</p>
         </div>
     </div>
 
-    <!-- ================= หน้าจอโหลดข้อมูล (แสดงตอนเชื่อม Google Sheet) ================= -->
     <div id="loading-screen" class="fixed inset-0 z-[90] flex flex-col items-center justify-center bg-dark-bg/90 backdrop-blur-md hidden transition-opacity duration-500">
         <div class="loader mb-4"></div>
-        <p class="text-cib-yellow font-heading tracking-wide text-lg animate-pulse">กำลังซิงค์ข้อมูลกับฐานข้อมูล...</p>
+        <p class="text-cib-yellow font-heading tracking-wide text-lg animate-pulse" id="loading-text">กำลังดึงข้อมูลจาก Google Sheets...</p>
     </div>
 
-    <!-- ================= ส่วนเนื้อหาเว็บไซต์หลัก ================= -->
     <div id="app-wrapper" class="flex w-full h-full opacity-0 pointer-events-none transition-opacity duration-500 z-10 relative">
-
-        <!-- Sidebar -->
-        <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-72 bg-[#040914]/95 backdrop-blur-xl border-r border-dark-border transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out shadow-2xl md:static md:flex md:flex-col">
+        <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-72 bg-[#040914]/95 backdrop-blur-xl border-r border-dark-border transform -translate-x-full md:translate-x-0 transition-transform duration-300 shadow-2xl md:static md:flex md:flex-col">
             <div class="p-8 flex flex-col items-center justify-center mt-2 relative">
                 <div class="absolute top-0 w-full h-[1px] bg-gradient-to-r from-transparent via-dark-border to-transparent"></div>
                 <div class="flex gap-3 mb-6 relative">
-                    <div class="absolute -inset-2 bg-cib-yellow/20 rounded-full blur-xl opacity-50"></div>
-                    <img src="cib-logo.png" alt="CIB Logo" class="w-14 h-14 rounded-2xl shadow-glow border border-[#1e325c] object-cover bg-dark-bg relative z-10" onerror="this.style.display='none'">
-                    <img src="tcsd-logo.png" alt="TCSD Logo" class="w-14 h-14 rounded-2xl shadow-glow border border-[#1e325c] object-contain bg-white relative z-10" onerror="this.style.display='none'">
+                    <img src="cib-logo.png" class="w-14 h-14 rounded-2xl border border-[#1e325c] object-cover bg-dark-bg relative z-10" onerror="this.style.display='none'">
+                    <img src="tcsd-logo.png" class="w-14 h-14 rounded-2xl border border-[#1e325c] object-contain bg-white relative z-10" onerror="this.style.display='none'">
                 </div>
                 <h2 class="text-xl font-heading font-bold text-cib-yellow text-center tracking-wide">เอกสาร ฝอ.</h2>
-                <p class="text-sm text-slate-400 mt-1 text-center font-light">บก.ปอท.กก.2</p>
             </div>
-
-            <nav class="flex-1 px-4 space-y-2 mt-2 overflow-y-auto custom-scrollbar pb-4">
-                <button id="nav-dashboard" onclick="switchPage('dashboard')" class="nav-btn w-full flex items-center gap-4 px-5 py-3.5 rounded-xl transition-all duration-300 bg-cib-yellow text-dark-bg font-bold shadow-glow">
-                    <i data-lucide="layout-dashboard" class="w-5 h-5"></i> ภาพรวมทั้งหมด
-                </button>
-                <button id="nav-documents" onclick="switchPage('documents')" class="nav-btn w-full flex items-center gap-4 px-5 py-3.5 rounded-xl transition-all duration-300 text-slate-300 hover:bg-dark-hover hover:text-white font-medium">
-                    <i data-lucide="file-text" class="w-5 h-5"></i> จัดการเอกสาร
-                </button>
-
+            <nav class="flex-1 px-4 space-y-2 mt-2 overflow-y-auto pb-4">
+                <button onclick="switchPage('dashboard')" id="nav-dashboard" class="nav-btn w-full flex items-center gap-4 px-5 py-3.5 rounded-xl bg-cib-yellow text-dark-bg font-bold"><i data-lucide="layout-dashboard" class="w-5 h-5"></i> ภาพรวมทั้งหมด</button>
+                <button onclick="switchPage('documents')" id="nav-documents" class="nav-btn w-full flex items-center gap-4 px-5 py-3.5 rounded-xl text-slate-300 hover:bg-dark-hover hover:text-white font-medium"><i data-lucide="file-text" class="w-5 h-5"></i> จัดการเอกสาร</button>
                 <div class="mt-8 pt-8 border-t border-dark-border">
-                    <p class="text-xs text-cib-yellow mb-3 px-2 font-medium tracking-wider uppercase opacity-80">📅 เลือกเดือน / ปี</p>
-                    <div class="flex items-center bg-dark-panel border border-dark-border rounded-xl p-1 hover:border-cib-yellow/50 transition-colors">
-                        <select id="monthYearSelect" onchange="changeMonthYear(this.value)" class="custom-select w-full pl-4 py-2.5 bg-transparent text-slate-200 font-medium text-sm focus:outline-none border-none">
-                            <!-- Options -->
-                        </select>
-                    </div>
+                    <p class="text-xs text-cib-yellow mb-3 px-2 font-medium">📅 เลือกเดือน / ปี (แยกแท็บอัตโนมัติ)</p>
+                    <select id="monthYearSelect" onchange="changeMonthYear(this.value)" class="custom-select w-full pl-4 py-2.5 bg-dark-panel border border-dark-border rounded-xl text-slate-200 text-sm focus:outline-none"></select>
                 </div>
             </nav>
-            <div class="p-6 text-xs text-slate-600 text-center font-light mt-auto">
-                © 2024 CIB.<br>All rights reserved.
-            </div>
         </aside>
 
-        <!-- พื้นหลังสีดำโปร่งแสงเวลาเปิดเมนูบนมือถือ -->
-        <div id="mobile-overlay" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-40 hidden md:hidden" onclick="toggleMobileMenu()"></div>
-
-        <!-- Main Content -->
         <main class="flex-1 flex flex-col h-screen overflow-hidden relative">
-            
-            <header class="glass-panel border-b border-dark-border p-4 flex items-center justify-between shadow-sm z-30 md:hidden">
-                <div class="flex items-center gap-2">
-                    <img src="cib-logo.png" alt="CIB" class="w-8 h-8 rounded-lg object-cover bg-dark-bg" onerror="this.style.display='none'">
-                    <img src="tcsd-logo.png" alt="TCSD" class="w-8 h-8 rounded-lg object-contain bg-white" onerror="this.style.display='none'">
-                    <h2 class="text-sm font-heading font-bold text-white ml-1">ฝอ. บก.ปอท.กก.2</h2>
-                </div>
-                <button onclick="toggleMobileMenu()" class="p-2 text-slate-300 hover:text-white rounded-lg bg-dark-panel border border-dark-border">
-                    <i data-lucide="menu" class="w-5 h-5"></i>
-                </button>
+            <header class="glass-panel border-b border-dark-border p-4 flex items-center justify-between z-30 md:hidden">
+                <h2 class="text-sm font-heading font-bold text-white">ฝอ. บก.ปอท.กก.2</h2>
+                <button onclick="document.getElementById('sidebar').classList.toggle('-translate-x-full')" class="p-2 text-slate-300 hover:text-white rounded-lg bg-dark-panel border border-dark-border"><i data-lucide="menu" class="w-5 h-5"></i></button>
             </header>
 
-            <div class="flex-1 overflow-y-auto custom-scrollbar p-4 md:p-8 lg:p-10 pb-20">
-                
-                <!-- ================= หน้า Dashboard ================= -->
+            <div class="flex-1 overflow-y-auto custom-scrollbar p-4 md:p-8 pb-20">
                 <div id="page-dashboard" class="fade-in block max-w-7xl mx-auto">
-                    <div class="flex flex-col items-center justify-center py-6 md:py-10 mb-8 relative">
-                        <div class="absolute inset-0 bg-cib-yellow/5 blur-[100px] rounded-full pointer-events-none"></div>
-                        <div class="flex items-center justify-center gap-6 md:gap-12 mb-8 md:mb-10 relative z-10">
-                            <!-- ลิงก์ไปเว็บ CIB -->
-                            <a href="https://www.cib.go.th/" target="_blank" rel="noopener noreferrer" class="block transform transition-transform hover:scale-105 duration-500">
-                                <img src="cib-logo.png" alt="CIB Logo" class="w-28 h-28 md:w-48 md:h-48 rounded-2xl md:rounded-[2rem] shadow-glow-blue border border-[#1e325c] object-cover bg-dark-bg" onerror="this.style.display='none'">
-                            </a>
-                            <!-- ลิงก์ไปเว็บ TCSD -->
-                            <a href="https://tcsd.cib.go.th/home" target="_blank" rel="noopener noreferrer" class="block transform transition-transform hover:scale-105 duration-500">
-                                <img src="tcsd-logo.png" alt="TCSD Logo" class="w-28 h-28 md:w-48 md:h-48 rounded-2xl md:rounded-[2rem] shadow-glow-blue border border-[#1e325c] object-contain bg-white" onerror="this.style.display='none'">
-                            </a>
+                    <div class="flex flex-col items-center py-6 mb-8 relative">
+                        <div class="flex gap-6 mb-8 z-10">
+                            <a href="https://www.cib.go.th/" target="_blank"><img src="cib-logo.png" class="w-28 h-28 rounded-[2rem] border border-[#1e325c] object-cover bg-dark-bg hover:scale-105 transition-transform" onerror="this.style.display='none'"></a>
+                            <a href="https://tcsd.cib.go.th/home" target="_blank"><img src="tcsd-logo.png" class="w-28 h-28 rounded-[2rem] border border-[#1e325c] object-contain bg-white hover:scale-105 transition-transform" onerror="this.style.display='none'"></a>
                         </div>
-                        
-                        <h1 class="text-2xl md:text-5xl font-heading font-bold text-white text-center mb-4 md:mb-6 tracking-wide drop-shadow-lg px-2">ฝอ.(งานป้องกันปราบปราม,ยุทธศาสตร์) บก.ปอท.</h1>
-                        
-                        <div class="glass-panel px-6 py-4 md:px-10 md:py-5 rounded-2xl border border-white/10 mb-8 text-center shadow-xl w-full max-w-lg">
-                            <p class="text-lg md:text-2xl font-bold text-cib-yellow mb-1">ว่าที่ พ.ต.ต.หญิง ฉันทรุจี เชื้อกรุงเทพ</p>
-                            <p class="text-xs md:text-base text-slate-400 font-light">(สว.ฝ่ายอำนวยการ บก.ปอท)</p>
-                        </div>
-                        
-                        <button onclick="switchPage('documents')" class="px-6 py-3 md:px-8 md:py-4 bg-cib-yellow text-dark-bg rounded-full shadow-glow hover:bg-yellow-400 transition-all transform hover:scale-105 flex items-center gap-3 text-base md:text-lg font-bold group">
-                            ไปหน้าจัดการเอกสาร <i data-lucide="arrow-right" class="w-5 h-5 group-hover:translate-x-1 transition-transform"></i>
-                        </button>
+                        <h1 class="text-2xl md:text-5xl font-heading font-bold text-white text-center mb-6">ฝอ.(งานป้องกันปราบปราม,ยุทธศาสตร์) บก.ปอท.</h1>
+                        <button onclick="switchPage('documents')" class="px-8 py-4 bg-cib-yellow text-dark-bg rounded-full font-bold hover:scale-105 transition-transform flex items-center gap-2">ไปหน้าจัดการเอกสาร <i data-lucide="arrow-right" class="w-5 h-5"></i></button>
                     </div>
-
+                    
+                    <!-- กู้คืนกล่องแดชบอร์ดแบบมีไอคอน -->
                     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-10">
                         <div class="glass-panel p-4 md:p-6 rounded-2xl border border-white/5 flex flex-col md:flex-row md:items-center justify-between group hover:border-blue-500/50 transition-colors">
-                            <div class="mb-2 md:mb-0"><p class="text-xs md:text-sm text-slate-400 mb-1">เอกสารทั้งหมด</p><p class="text-3xl md:text-4xl font-heading font-bold text-white" id="stat-total">0</p></div>
+                            <div class="mb-2 md:mb-0"><p class="text-xs md:text-sm text-slate-400 mb-1">เอกสารทั้งหมด (เดือนนี้)</p><p class="text-3xl md:text-4xl font-heading font-bold text-white" id="stat-total">0</p></div>
                             <div class="p-3 md:p-4 rounded-xl bg-blue-500/20 text-blue-400 self-start md:self-auto group-hover:scale-110 transition-transform"><i data-lucide="files" class="w-6 h-6 md:w-8 md:h-8"></i></div>
                         </div>
                         <div class="glass-panel p-4 md:p-6 rounded-2xl border border-white/5 flex flex-col md:flex-row md:items-center justify-between group hover:border-pink-500/50 transition-colors">
-                            <div class="mb-2 md:mb-0"><p class="text-xs md:text-sm text-slate-400 mb-1">ตั้งแท่น</p><p class="text-3xl md:text-4xl font-heading font-bold text-pink-400" id="stat-draft">0</p></div>
+                            <div class="mb-2 md:mb-0"><p class="text-xs md:text-sm text-slate-400 mb-1">ตั้งแท่น (เดือนนี้)</p><p class="text-3xl md:text-4xl font-heading font-bold text-pink-400" id="stat-draft">0</p></div>
                             <div class="p-3 md:p-4 rounded-xl bg-pink-500/20 text-pink-400 self-start md:self-auto group-hover:scale-110 transition-transform"><i data-lucide="file-plus" class="w-6 h-6 md:w-8 md:h-8"></i></div>
                         </div>
                         <div class="glass-panel p-4 md:p-6 rounded-2xl border border-white/5 flex flex-col md:flex-row md:items-center justify-between group hover:border-cib-yellow/50 transition-colors">
-                            <div class="mb-2 md:mb-0"><p class="text-xs md:text-sm text-slate-400 mb-1">ดำเนินการ</p><p class="text-3xl md:text-4xl font-heading font-bold text-cib-yellow" id="stat-in-progress">0</p></div>
+                            <div class="mb-2 md:mb-0"><p class="text-xs md:text-sm text-slate-400 mb-1">ดำเนินการ (เดือนนี้)</p><p class="text-3xl md:text-4xl font-heading font-bold text-cib-yellow" id="stat-in-progress">0</p></div>
                             <div class="p-3 md:p-4 rounded-xl bg-cib-yellow/20 text-cib-yellow self-start md:self-auto group-hover:scale-110 transition-transform"><i data-lucide="clock" class="w-6 h-6 md:w-8 md:h-8"></i></div>
                         </div>
                         <div class="glass-panel p-4 md:p-6 rounded-2xl border border-white/5 flex flex-col md:flex-row md:items-center justify-between group hover:border-emerald-500/50 transition-colors">
-                            <div class="mb-2 md:mb-0"><p class="text-xs md:text-sm text-slate-400 mb-1">เสร็จสิ้นแล้ว</p><p class="text-3xl md:text-4xl font-heading font-bold text-emerald-400" id="stat-completed">0</p></div>
+                            <div class="mb-2 md:mb-0"><p class="text-xs md:text-sm text-slate-400 mb-1">เสร็จสิ้น (เดือนนี้)</p><p class="text-3xl md:text-4xl font-heading font-bold text-emerald-400" id="stat-completed">0</p></div>
                             <div class="p-3 md:p-4 rounded-xl bg-emerald-500/20 text-emerald-400 self-start md:self-auto group-hover:scale-110 transition-transform"><i data-lucide="check-circle" class="w-6 h-6 md:w-8 md:h-8"></i></div>
                         </div>
                     </div>
 
-                    <div class="glass-panel p-5 md:p-8 rounded-3xl border border-white/5">
-                        <h3 class="text-lg md:text-xl font-heading font-bold text-white mb-4 md:mb-6 flex items-center gap-3">
-                            <i data-lucide="bar-chart-3" class="w-5 h-5 md:w-6 md:h-6 text-cib-yellow"></i> สถิติเปรียบเทียบเอกสาร 03 และ 05
-                        </h3>
-                        <div class="relative h-[250px] md:h-[350px] w-full">
-                            <canvas id="monthlyChart"></canvas>
-                        </div>
-                    </div>
+                    <div class="glass-panel p-6 rounded-3xl h-[350px]"><canvas id="monthlyChart"></canvas></div>
                 </div>
 
-                <!-- ================= หน้าจัดการเอกสาร ================= -->
                 <div id="page-documents" class="fade-in hidden max-w-[1600px] mx-auto">
-                    
-                    <div class="mb-6 md:mb-8">
-                        <h1 class="text-2xl md:text-3xl font-heading font-bold text-white flex items-center gap-3">
-                            <i data-lucide="folder-open" class="w-6 h-6 md:w-8 md:h-8 text-cib-yellow"></i> ระบบจัดการเอกสาร
-                        </h1>
-                        <p class="text-xs md:text-sm text-slate-400 mt-2 font-light">ข้อมูลเชื่อมต่อกับ Google Sheets โดยตรงและบันทึกอัตโนมัติ (Auto-save)</p>
+                    <div class="mb-6 flex justify-between items-end">
+                        <div>
+                            <h1 class="text-2xl md:text-3xl font-heading font-bold text-white flex items-center gap-3"><i data-lucide="folder-open" class="text-cib-yellow"></i> ระบบจัดการเอกสาร</h1>
+                            <p class="text-xs text-slate-400 mt-2 font-light" id="current-sheet-label">ข้อมูลจะถูกบันทึกลง Sheet รายเดือนอัตโนมัติ</p>
+                        </div>
                     </div>
-
+                    
+                    <!-- กู้คืนกล่องสรุปสถานะ งาน 03 และ 05 -->
                     <div class="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-6 mb-6 md:mb-8">
                         <!-- สรุปงาน 03 -->
                         <div class="glass-panel p-4 md:p-6 rounded-3xl border border-blue-500/20 relative overflow-hidden">
@@ -301,101 +198,80 @@
                         </div>
                     </div>
 
-                    <!-- แจ้งเตือนบนมือถือสำหรับการเลื่อนตาราง -->
-                    <div class="md:hidden flex items-center gap-2 p-3 bg-cib-yellow/10 border border-cib-yellow/20 rounded-xl mb-4 text-cib-yellow text-xs font-medium">
-                        <i data-lucide="arrow-left-right" class="w-4 h-4 shrink-0"></i>
-                        <p>เลื่อนซ้าย-ขวา ภายในตารางเพื่อดูและแก้ไขข้อมูลเพิ่มเติม</p>
-                    </div>
-
-                    <!-- ตารางหลัก -->
                     <div class="glass-panel rounded-3xl border border-white/5 overflow-hidden shadow-2xl relative">
-                        
-                        <!-- แถบ Save Status -->
-                        <div class="p-3 md:p-4 border-b border-white/5 bg-white/[0.02] flex justify-between items-center">
-                            <button onclick="fetchDataFromGoogleSheet()" class="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-dark-hover hover:bg-slate-700 text-slate-300 transition-colors">
-                                <i data-lucide="refresh-cw" class="w-3 h-3"></i> ดึงข้อมูลล่าสุด
-                            </button>
-                            <div id="statusBox" class="flex items-center gap-2 px-3 py-1.5 md:px-4 md:py-2 rounded-full text-xs md:text-sm font-medium transition-colors duration-300 bg-white/5 text-slate-400 border border-white/10">
-                                <i id="statusIcon" data-lucide="check-circle-2" class="w-3 h-3 md:w-4 md:h-4"></i>
-                                <span id="statusText">พร้อมใช้งาน</span>
+                        <div class="p-3 border-b border-white/5 flex justify-between items-center bg-white/[0.02]">
+                            <button onclick="fetchDataFromGoogleSheet()" class="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-dark-hover text-slate-300 hover:bg-slate-700"><i data-lucide="refresh-cw" class="w-3 h-3"></i> ดึงข้อมูลล่าสุด</button>
+                            <div id="statusBox" class="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium bg-white/5 text-slate-400 border border-white/10 transition-colors">
+                                <i id="statusIcon" data-lucide="check-circle-2" class="w-4 h-4"></i><span id="statusText">พร้อมใช้งาน</span>
                             </div>
                         </div>
-
-                        <!-- ตัวตาราง -->
                         <div class="overflow-x-auto w-full custom-scrollbar pb-2">
-                            <table class="w-full text-left min-w-[1400px] md:min-w-[1600px]">
+                            <table class="w-full text-left min-w-[1600px]">
                                 <thead>
                                     <tr class="border-b border-white/10 bg-white/[0.03]">
-                                        <th class="py-4 px-3 md:py-5 md:px-4 text-xs md:text-sm font-heading font-medium text-slate-300 border-r border-white/5 w-36 md:w-40">วันที่</th>
-                                        <th class="py-4 px-3 md:py-5 md:px-4 text-xs md:text-sm font-heading font-medium text-slate-300 border-r border-white/5 w-28 md:w-32">เลขรับ บก.</th>
-                                        <th class="py-4 px-3 md:py-5 md:px-4 text-xs md:text-sm font-heading font-medium text-slate-300 border-r border-white/5 w-20 md:w-24 text-center">03/05</th>
-                                        <th class="py-4 px-3 md:py-5 md:px-4 text-xs md:text-sm font-heading font-medium text-cib-yellow border-r border-white/5 min-w-[280px] md:min-w-[350px]">เรื่อง (คลิกเพื่อแก้ไข)</th>
-                                        <th class="py-4 px-3 md:py-5 md:px-4 text-xs md:text-sm font-heading font-medium text-slate-300 border-r border-white/5 min-w-[140px] md:min-w-[160px]">ผู้รับผิดชอบ</th>
-                                        <th class="py-4 px-3 md:py-5 md:px-4 text-xs md:text-sm font-heading font-medium text-slate-300 border-r border-white/5 min-w-[200px] md:min-w-[220px]">สถานะเอกสาร</th>
-                                        <th class="py-4 px-3 md:py-5 md:px-4 text-xs md:text-sm font-heading font-medium text-slate-300 border-r border-white/5 min-w-[180px] md:min-w-[200px]">เลขหนังสือส่ง/ลงวันที่</th>
-                                        <th class="py-4 px-3 md:py-5 md:px-4 text-xs md:text-sm font-heading font-medium text-slate-300 border-r border-white/5 w-36 md:w-40">วันที่เสร็จ</th>
-                                        <th class="py-4 px-3 md:py-5 md:px-4 text-xs md:text-sm font-heading font-medium text-slate-300 border-r border-white/5 min-w-[140px] md:min-w-[150px]">ประชุม/ไม่ประชุม</th>
-                                        <th class="py-4 px-3 md:py-5 md:px-4 text-xs md:text-sm font-heading font-medium text-slate-300 border-r border-white/5 min-w-[160px] md:min-w-[180px]">ผู้เข้าประชุม</th>
-                                        <th class="py-4 px-3 md:py-5 md:px-4 text-xs md:text-sm font-heading font-medium text-slate-300 border-r border-white/5 min-w-[120px] md:min-w-[140px]">ช่องทางแจ้ง</th>
-                                        <th class="py-4 px-3 md:py-5 md:px-4 text-xs md:text-sm font-heading font-medium text-slate-300 border-r border-white/5 min-w-[140px] md:min-w-[160px]">สถานะช่องทางแจ้ง</th>
-                                        <th class="py-4 px-3 md:py-5 md:px-4 text-xs md:text-sm font-heading font-medium text-rose-400 min-w-[70px] md:min-w-[80px] text-center">ลบ</th>
+                                        <th class="py-4 px-4 text-sm font-heading font-medium text-slate-300 border-r w-36">วันที่</th>
+                                        <th class="py-4 px-4 text-sm font-heading font-medium text-slate-300 border-r min-w-[120px]">เลขรับ บก.</th>
+                                        <th class="py-4 px-4 text-sm font-heading font-medium text-slate-300 border-r w-24">03/05</th>
+                                        <th class="py-4 px-4 text-sm font-heading font-medium text-cib-yellow border-r min-w-[300px]">เรื่อง (คลิกเพื่อแก้ไข)</th>
+                                        <th class="py-4 px-4 text-sm font-heading font-medium text-slate-300 border-r min-w-[160px]">ผู้รับผิดชอบ</th>
+                                        <th class="py-4 px-4 text-sm font-heading font-medium text-slate-300 border-r min-w-[200px]">สถานะเอกสาร</th>
+                                        <th class="py-4 px-4 text-sm font-heading font-medium text-slate-300 border-r min-w-[200px]">เลขหนังสือส่ง/ลงวันที่</th>
+                                        <th class="py-4 px-4 text-sm font-heading font-medium text-slate-300 border-r w-36">วันที่เสร็จ</th>
+                                        <th class="py-4 px-4 text-sm font-heading font-medium text-slate-300 border-r min-w-[150px]">ประชุม/ไม่ประชุม</th>
+                                        <th class="py-4 px-4 text-sm font-heading font-medium text-slate-300 border-r min-w-[180px]">ผู้เข้าประชุม</th>
+                                        <th class="py-4 px-4 text-sm font-heading font-medium text-slate-300 border-r min-w-[140px]">ช่องทางแจ้ง</th>
+                                        <th class="py-4 px-4 text-sm font-heading font-medium text-slate-300 border-r min-w-[140px]">สถานะช่องทางแจ้ง</th>
+                                        <th class="py-4 px-4 text-sm text-rose-400 text-center w-20">ลบ</th>
                                     </tr>
                                 </thead>
-                                <tbody id="tableBody">
-                                    <!-- เรนเดอร์ด้วย JS -->
-                                </tbody>
+                                <tbody id="tableBody"></tbody>
                             </table>
                         </div>
                     </div>
                 </div>
-
             </div>
         </main>
     </div>
 
-    <!-- Modal ยืนยันการลบ -->
-    <div id="deleteModal" class="fixed inset-0 bg-[#02050a]/90 backdrop-blur-md z-[110] flex items-center justify-center hidden opacity-0 transition-opacity duration-300 px-4">
-        <div class="bg-dark-panel border border-slate-700/50 rounded-3xl shadow-[0_0_50px_rgba(0,0,0,0.5)] p-6 md:p-8 max-w-sm w-full transform scale-95 transition-transform duration-300" id="deleteModalContent">
-            <div class="flex items-center justify-center w-14 h-14 md:w-16 md:h-16 rounded-full bg-rose-500/10 border border-rose-500/20 mb-4 md:mb-6 mx-auto shadow-inner">
-                <i data-lucide="alert-triangle" class="w-7 h-7 md:w-8 md:h-8 text-rose-500"></i>
-            </div>
-            <h3 class="text-lg md:text-xl font-heading font-bold text-center text-white mb-2 md:mb-3">ยืนยันการลบข้อมูล</h3>
-            <p class="text-xs md:text-sm text-center text-slate-400 mb-6 md:mb-8 font-light">ข้อมูลนี้จะถูกลบออกจากระบบอย่างถาวร คุณแน่ใจหรือไม่ที่จะดำเนินการต่อ?</p>
-            <div class="flex gap-3 md:gap-4">
-                <button onclick="closeDeleteModal()" class="flex-1 px-3 py-2.5 md:px-4 md:py-3 bg-dark-hover border border-dark-border text-slate-300 rounded-xl text-sm md:text-base font-medium hover:bg-slate-800 transition-colors">ยกเลิก</button>
-                <button onclick="confirmDelete()" class="flex-1 px-3 py-2.5 md:px-4 md:py-3 bg-rose-600 text-white rounded-xl text-sm md:text-base font-medium shadow-[0_0_15px_rgba(225,29,72,0.4)] hover:bg-rose-500 transition-colors">ลบข้อมูล</button>
+    <!-- Modal ลบ -->
+    <div id="deleteModal" class="fixed inset-0 bg-[#02050a]/90 backdrop-blur-md z-[110] flex items-center justify-center hidden opacity-0 transition-opacity">
+        <div class="bg-dark-panel border border-slate-700/50 rounded-3xl p-8 max-w-sm w-full" id="deleteModalContent">
+            <h3 class="text-xl font-heading font-bold text-center text-white mb-2">ยืนยันการลบข้อมูล</h3>
+            <p class="text-sm text-center text-slate-400 mb-8">คุณแน่ใจหรือไม่ที่จะลบข้อมูลนี้ถาวร?</p>
+            <div class="flex gap-4">
+                <button onclick="closeDeleteModal()" class="flex-1 py-3 bg-dark-hover text-slate-300 rounded-xl font-medium">ยกเลิก</button>
+                <button onclick="confirmDelete()" class="flex-1 py-3 bg-rose-600 text-white rounded-xl font-medium">ลบข้อมูล</button>
             </div>
         </div>
     </div>
 
     <script>
         // =========================================================
-        // 🛑 ใส่ URL ของ GOOGLE APPS SCRIPT ที่นี่ 🛑
-        const GOOGLE_SHEET_URL = 'ใส่_URL_ของ_GOOGLE_APPS_SCRIPT_ที่นี่'; 
+        // 🛑 ใส่ URL ของ GOOGLE APPS SCRIPT ของคุณตรงนี้ 🛑
+        const GOOGLE_SHEET_URL = 'https://script.google.com/macros/s/AKfycbxUBlYeSh2VfVrnHgGpKj1-lFXD6ySUaQCKCahANQefjj9LW5oJ4CsvM7p73o6AV-oQ/exec'; 
         // =========================================================
 
         let data = []; 
         const columns = ['col1', 'col2', 'col3', 'col4', 'col5', 'col6', 'col7', 'col8', 'col9', 'col10', 'col11', 'col12'];
-        
-        let saveTimeout;
-        let resetTimeout;
-        let currentMonthFilter = ''; 
-        let myChart = null;
-        let currentDeleteId = null;
+        let saveTimeout; let currentMonthFilter = ''; let myChart = null; let currentDeleteId = null;
 
         lucide.createIcons();
 
-        // ================= ระบบเชื่อมต่อ Google Sheet =================
+        // โหลดข้อมูลรายเดือนโดยพ่วงพารามิเตอร์ month ไปด้วย
         function fetchDataFromGoogleSheet() {
             document.getElementById('loading-screen').classList.remove('hidden');
+            document.getElementById('loading-text').innerText = `กำลังดึงข้อมูลเดือน ${currentMonthFilter}...`;
             setTimeout(() => document.getElementById('loading-screen').classList.remove('opacity-0'), 50);
             
             if (GOOGLE_SHEET_URL === 'ใส่_URL_ของ_GOOGLE_APPS_SCRIPT_ที่นี่') {
-                loadDummyData();
-                return;
+                alert("กรุณาใส่ URL ของ Google Apps Script ในโค้ดก่อนครับ");
+                loadDummyData(); return;
             }
 
-            fetch(GOOGLE_SHEET_URL)
+            // เพิ่มพารามิเตอร์ month ต่อท้าย URL
+            const fetchUrl = `${GOOGLE_SHEET_URL}?month=${currentMonthFilter}`;
+
+            fetch(fetchUrl)
                 .then(res => res.json())
                 .then(sheetData => {
                     data = sheetData;
@@ -403,423 +279,255 @@
                     finishLoading();
                 })
                 .catch(err => {
-                    console.error('Error fetching data:', err);
-                    alert("ไม่สามารถดึงข้อมูลจาก Google Sheet ได้ กำลังใช้ข้อมูลสำรองแทน");
+                    console.error('Fetch Error:', err);
+                    updateStatusUI('error');
                     loadDummyData();
                 });
         }
 
+        // เซฟข้อมูลรายเดือนโดยแนบเดือน (month) เข้าไปใน Payload ด้วย
         function saveDataToGoogleSheet() {
-            if (GOOGLE_SHEET_URL === 'https://script.google.com/macros/s/AKfycbxre9RFBApxyWlCD7sBfBmyoaPYFAEDXssDKVt3M6Zjgn2ocyySnBAnj0iG2PtYjGTU/exec') return; 
+            if (GOOGLE_SHEET_URL === 'ใส่_URL_ของ_GOOGLE_APPS_SCRIPT_ที่นี่') {
+                updateStatusUI('error');
+                return Promise.resolve(); 
+            }
             
-            fetch(GOOGLE_SHEET_URL, {
+            const payload = {
+                month: currentMonthFilter,
+                data: data
+            };
+
+            return fetch(GOOGLE_SHEET_URL, {
                 method: 'POST',
-                body: JSON.stringify(data)
+                body: JSON.stringify(payload)
             }).then(res => res.json())
-              .then(res => console.log('Saved to Google Sheet!', res))
-              .catch(err => console.error('Error saving:', err));
+              .then(res => {
+                  if(res.status !== 'success') throw new Error('Sheet error');
+              });
         }
 
         function loadDummyData() {
-            if(data.length === 0) {
-                 data = [
-                    { id: 1, col1: '', col2: '', col3: '', col4: '', col5: '', col6: '', col7: '', col8: '', col9: '', col10: '', col11: '', col12: '' }
-                ];
-            }
+            if(data.length === 0) data = [{ id: 1, col1: '', col2: '', col3: '', col4: '', col5: '', col6: '', col7: '', col8: '', col9: '', col10: '', col11: '', col12: '' }];
             finishLoading();
         }
 
         function finishLoading() {
             document.getElementById('loading-screen').classList.add('opacity-0');
-            setTimeout(() => {
-                document.getElementById('loading-screen').classList.add('hidden');
-                updateAllStats();
-                renderTable();
-            }, 500);
+            document.getElementById('current-sheet-label').innerText = `กำลังทำงานอยู่ใน Sheet: ${currentMonthFilter}`;
+            setTimeout(() => { document.getElementById('loading-screen').classList.add('hidden'); updateAllStats(); renderTable(); }, 500);
         }
 
-
-        // ================= ระบบ PIN CODE (รหัส 7171) =================
         const CORRECT_PIN = '7171';
         const pinInputs = document.querySelectorAll('.pin-input');
-        const pinScreen = document.getElementById('pin-screen');
-        const pinBox = document.getElementById('pin-box');
-        const pinError = document.getElementById('pin-error');
-        const appWrapper = document.getElementById('app-wrapper');
-
         setTimeout(() => { if(pinInputs[0]) pinInputs[0].focus(); }, 300);
 
         pinInputs.forEach((input, index) => {
-            input.addEventListener('paste', (e) => e.preventDefault());
             input.addEventListener('input', (e) => {
                 e.target.value = e.target.value.replace(/[^0-9]/g, '');
                 if (e.target.value.length === 1) {
                     if (index < pinInputs.length - 1) pinInputs[index + 1].focus();
-                    else checkPin(); 
+                    else {
+                        if (Array.from(pinInputs).map(i => i.value).join('') === CORRECT_PIN) {
+                            document.getElementById('pin-screen').classList.add('opacity-0');
+                            document.getElementById('app-wrapper').classList.remove('opacity-0', 'pointer-events-none');
+                            setTimeout(() => { document.getElementById('pin-screen').classList.add('hidden'); fetchDataFromGoogleSheet(); }, 500);
+                        } else {
+                            document.getElementById('pin-box').classList.add('shake');
+                            setTimeout(() => { document.getElementById('pin-box').classList.remove('shake'); pinInputs.forEach(i => i.value = ''); pinInputs[0].focus(); }, 600);
+                        }
+                    }
                 }
             });
-            input.addEventListener('keydown', (e) => {
-                if (e.key === 'Backspace' && !e.target.value && index > 0) {
-                    pinInputs[index - 1].focus();
-                    pinInputs[index - 1].value = '';
-                }
-            });
+            input.addEventListener('keydown', (e) => { if (e.key === 'Backspace' && !e.target.value && index > 0) { pinInputs[index - 1].focus(); pinInputs[index - 1].value = ''; } });
         });
 
-        function checkPin() {
-            const enteredPin = Array.from(pinInputs).map(i => i.value).join('');
-            if (enteredPin === CORRECT_PIN) {
-                pinInputs.forEach(i => {
-                    i.classList.remove('border-dark-border', 'border-rose-500');
-                    i.classList.add('border-emerald-500', 'text-emerald-400');
-                });
-                pinError.classList.add('opacity-0');
-                pinInputs.forEach(i => i.blur());
-                
-                setTimeout(() => {
-                    pinScreen.classList.add('opacity-0');
-                    appWrapper.classList.remove('opacity-0', 'pointer-events-none');
-                    setTimeout(() => {
-                        pinScreen.classList.add('hidden');
-                        fetchDataFromGoogleSheet(); 
-                    }, 500);
-                }, 300);
-            } else {
-                pinError.classList.remove('opacity-0');
-                pinBox.classList.add('shake');
-                pinInputs.forEach(i => {
-                    i.classList.remove('border-dark-border', 'focus:border-cib-yellow');
-                    i.classList.add('border-rose-500', 'text-rose-500');
-                });
-                setTimeout(() => {
-                    pinBox.classList.remove('shake');
-                    pinInputs.forEach(i => {
-                        i.value = '';
-                        i.classList.remove('border-rose-500', 'text-rose-500');
-                        i.classList.add('border-dark-border', 'focus:border-cib-yellow');
-                    });
-                    pinInputs[0].focus();
-                }, 600);
-            }
-        }
-
-        // ================= ฟังก์ชันพื้นฐานของแอพ =================
         function populateMonthYear() {
-            const thaiMonths = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
+            const thaiMonths = ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."];
             const select = document.getElementById('monthYearSelect');
-            select.innerHTML = '';
-            
             for (let year = 2026; year <= 2028; year++) {
-                let startMonth = (year === 2026) ? 5 : 0;
-                for (let month = startMonth; month < 12; month++) {
-                    const value = `${year}-${String(month + 1).padStart(2, '0')}`;
-                    const text = `${thaiMonths[month]} ${year + 543}`;
-                    const option = document.createElement('option');
-                    option.value = value;
-                    option.text = text;
-                    select.appendChild(option);
+                for (let month = (year===2026?5:0); month < 12; month++) {
+                    select.add(new Option(`${thaiMonths[month]} ${year + 543}`, `${year}-${String(month + 1).padStart(2, '0')}`));
                 }
             }
-            const defaultMonth = `2026-06`; 
-            currentMonthFilter = defaultMonth;
-            select.value = currentMonthFilter;
+            currentMonthFilter = `2026-06`; select.value = currentMonthFilter;
         }
 
-        function changeMonthYear(value) {
-            currentMonthFilter = value;
-            renderTable();
-        }
-
-        function toggleMobileMenu() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('mobile-overlay');
-            sidebar.classList.toggle('-translate-x-full');
-            overlay.classList.toggle('hidden');
+        // เมื่อเปลี่ยนเดือน ให้โหลดข้อมูลเดือนนั้นๆ มาทันที
+        function changeMonthYear(value) { 
+            currentMonthFilter = value; 
+            fetchDataFromGoogleSheet(); 
         }
 
         function switchPage(pageId) {
-            document.getElementById('page-dashboard').classList.add('hidden');
+            document.getElementById('page-dashboard').classList.add('hidden'); 
             document.getElementById('page-documents').classList.add('hidden');
+            const page = document.getElementById('page-' + pageId); 
+            page.classList.remove('hidden');
             
-            const page = document.getElementById('page-' + pageId);
-            page.classList.remove('hidden', 'fade-in');
-            void page.offsetWidth; 
-            page.classList.add('fade-in');
-
-            document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.className = 'nav-btn w-full flex items-center gap-4 px-5 py-3.5 rounded-xl transition-all duration-300 text-slate-300 hover:bg-dark-hover hover:text-white font-medium';
-            });
-
-            document.getElementById('nav-' + pageId).className = 'nav-btn w-full flex items-center gap-4 px-5 py-3.5 rounded-xl transition-all duration-300 bg-cib-yellow text-dark-bg font-bold shadow-glow';
-
-            if (window.innerWidth < 768) {
-                document.getElementById('sidebar').classList.add('-translate-x-full');
-                document.getElementById('mobile-overlay').classList.add('hidden');
-            }
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.className = 'nav-btn w-full flex items-center gap-4 px-5 py-3.5 rounded-xl text-slate-300 hover:bg-dark-hover hover:text-white font-medium');
+            document.getElementById('nav-' + pageId).className = 'nav-btn w-full flex items-center gap-4 px-5 py-3.5 rounded-xl bg-cib-yellow text-dark-bg font-bold';
             
-            if (pageId === 'dashboard' && myChart) {
-                setTimeout(() => myChart.resize(), 100);
+            // แก้ไขบั๊กกราฟไม่ขึ้นเมื่อสลับหน้า
+            if(pageId === 'dashboard') {
+                setTimeout(() => { updateChart(); }, 50); // รอให้ div แสดงผลก่อนวาดกราฟ
             }
         }
 
-        // ================= กราฟ Chart.js =================
         function updateChart() {
-            const monthlyCounts = {};
-            data.forEach(d => {
-                if(d.col1) {
-                    const monthYear = d.col1.substring(0, 7); 
-                    if (!monthlyCounts[monthYear]) monthlyCounts[monthYear] = { '03': 0, '05': 0 };
-                    if (d.col3 === '03') monthlyCounts[monthYear]['03']++;
-                    else if (d.col3 === '05') monthlyCounts[monthYear]['05']++;
-                }
-            });
-
-            const sortedKeys = Object.keys(monthlyCounts).sort();
-            const thaiShortMonths = ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."];
-            const labels = sortedKeys.map(key => {
-                const parts = key.split('-');
-                return `${thaiShortMonths[parseInt(parts[1])-1]} ${(parseInt(parts[0]) + 543).toString().substring(2)}`;
-            });
-
-            const chartData03 = sortedKeys.map(key => monthlyCounts[key]['03']);
-            const chartData05 = sortedKeys.map(key => monthlyCounts[key]['05']);
-
-            const ctx = document.getElementById('monthlyChart').getContext('2d');
+            const canvas = document.getElementById('monthlyChart');
+            if(!canvas) return;
+            const ctx = canvas.getContext('2d');
+            if(myChart) { myChart.destroy(); }
+            Chart.defaults.color = '#94a3b8';
             
-            if(myChart) {
-                myChart.data.labels = labels;
-                myChart.data.datasets[0].data = chartData03;
-                myChart.data.datasets[1].data = chartData05;
-                myChart.update();
-            } else {
-                Chart.defaults.color = '#94a3b8';
-                myChart = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: labels,
-                        datasets: [
-                            { label: 'เอกสาร 03', data: chartData03, backgroundColor: '#3b82f6', borderRadius: 4 },
-                            { label: 'เอกสาร 05', data: chartData05, backgroundColor: '#FFC72C', borderRadius: 4 }
-                        ]
+            // ใช้ชื่อเดือนที่เลือกมาทำป้ายกำกับ
+            const select = document.getElementById('monthYearSelect');
+            const monthLabel = select.options[select.selectedIndex].text;
+
+            const total03 = data.filter(d => d.col3 === '03').length;
+            const total05 = data.filter(d => d.col3 === '05').length;
+
+            myChart = new Chart(ctx, { 
+                type: 'bar', 
+                data: { 
+                    labels: [monthLabel], 
+                    datasets: [
+                        { label: 'เอกสาร 03', data: [total03], backgroundColor: '#3b82f6', borderRadius: 4 },
+                        { label: 'เอกสาร 05', data: [total05], backgroundColor: '#FFC72C', borderRadius: 4 }
+                    ] 
+                }, 
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { grid: { color: 'rgba(255,255,255,0.05)' }, beginAtZero: true, ticks: { stepSize: 1, precision: 0 } },
+                        x: { grid: { color: 'rgba(255,255,255,0.05)' } }
                     },
-                    options: {
-                        responsive: true, maintainAspectRatio: false,
-                        scales: {
-                            y: { grid: { color: 'rgba(255,255,255,0.05)' }, beginAtZero: true, ticks: { stepSize: 1, precision: 0 } },
-                            x: { grid: { color: 'rgba(255,255,255,0.05)' } }
-                        },
-                        plugins: {
-                            legend: { labels: { font: { family: 'Prompt' }, usePointStyle: true, boxWidth: 8 } },
-                            tooltip: { backgroundColor: 'rgba(4, 9, 20, 0.9)', titleFont: { family: 'Prompt' }, bodyFont: { family: 'Prompt' } }
-                        }
-                    }
-                });
-            }
+                    plugins: { legend: { labels: { font: { family: 'Prompt' }, usePointStyle: true } } }
+                } 
+            });
         }
 
-        // ================= สถิติและการบันทึก =================
         function updateAllStats() {
-            document.getElementById('stat-total').innerText = data.filter(d => d.col1).length;
-            document.getElementById('stat-draft').innerText = data.filter(d => d.col6 === 'ตั้งแท่น').length;
-            document.getElementById('stat-in-progress').innerText = data.filter(d => d.col6 === 'อยู่ระหว่างดำเนินการ').length;
-            document.getElementById('stat-completed').innerText = data.filter(d => d.col6 === 'เสร็จสิ้น').length;
+            // นับเฉพาะแถวที่มีข้อมูลจริงๆ
+            const validData = data.filter(d => d.col1 || d.col4);
+
+            // อัปเดตกล่องในหน้าแดชบอร์ด
+            document.getElementById('stat-total').innerText = validData.length;
+            document.getElementById('stat-draft').innerText = validData.filter(d => d.col6 === 'ตั้งแท่น').length;
+            document.getElementById('stat-in-progress').innerText = validData.filter(d => d.col6 === 'อยู่ระหว่างดำเนินการ').length;
+            document.getElementById('stat-completed').innerText = validData.filter(d => d.col6 === 'เสร็จสิ้น').length;
+            
+            // อัปเดตกล่องสถิติ 03 / 05 ในหน้าจัดการเอกสาร
+            const rows03 = validData.filter(d => d.col3 === '03');
+            const rows05 = validData.filter(d => d.col3 === '05');
+
+            if(document.getElementById('stat-month-03-total')) {
+                document.getElementById('stat-month-03-total').innerText = rows03.length;
+                document.getElementById('stat-month-03-draft').innerText = rows03.filter(d => d.col6 === 'ตั้งแท่น').length;
+                document.getElementById('stat-month-03-in-progress').innerText = rows03.filter(d => d.col6 === 'อยู่ระหว่างดำเนินการ').length;
+                document.getElementById('stat-month-03-completed').innerText = rows03.filter(d => d.col6 === 'เสร็จสิ้น').length;
+
+                document.getElementById('stat-month-05-total').innerText = rows05.length;
+                document.getElementById('stat-month-05-draft').innerText = rows05.filter(d => d.col6 === 'ตั้งแท่น').length;
+                document.getElementById('stat-month-05-in-progress').innerText = rows05.filter(d => d.col6 === 'อยู่ระหว่างดำเนินการ').length;
+                document.getElementById('stat-month-05-completed').innerText = rows05.filter(d => d.col6 === 'เสร็จสิ้น').length;
+            }
+
             updateChart();
         }
 
-        function updateMonthlyStats(filteredRows) {
-            const validRows = filteredRows.filter(d => d.col1 || d.col2 || d.col4); 
-            const rows03 = validRows.filter(d => d.col3 === '03');
-            const rows05 = validRows.filter(d => d.col3 === '05');
-
-            document.getElementById('stat-month-03-total').innerText = rows03.length;
-            document.getElementById('stat-month-03-draft').innerText = rows03.filter(d => d.col6 === 'ตั้งแท่น').length;
-            document.getElementById('stat-month-03-in-progress').innerText = rows03.filter(d => d.col6 === 'อยู่ระหว่างดำเนินการ').length;
-            document.getElementById('stat-month-03-completed').innerText = rows03.filter(d => d.col6 === 'เสร็จสิ้น').length;
-
-            document.getElementById('stat-month-05-total').innerText = rows05.length;
-            document.getElementById('stat-month-05-draft').innerText = rows05.filter(d => d.col6 === 'ตั้งแท่น').length;
-            document.getElementById('stat-month-05-in-progress').innerText = rows05.filter(d => d.col6 === 'อยู่ระหว่างดำเนินการ').length;
-            document.getElementById('stat-month-05-completed').innerText = rows05.filter(d => d.col6 === 'เสร็จสิ้น').length;
-        }
-
         function updateStatusUI(status) {
-            const statusBox = document.getElementById('statusBox');
-            const statusIcon = document.getElementById('statusIcon');
-            const statusText = document.getElementById('statusText');
-
+            const statusBox = document.getElementById('statusBox'); const statusIcon = document.getElementById('statusIcon'); const statusText = document.getElementById('statusText');
             if (status === 'saving') {
-                statusBox.className = 'flex items-center gap-2 px-3 py-1.5 md:px-4 md:py-2 rounded-full text-xs md:text-sm font-medium transition-colors duration-300 bg-cib-yellow/20 text-cib-yellow border border-cib-yellow/50';
-                statusIcon.setAttribute('data-lucide', 'loader-2');
-                statusIcon.classList.add('animate-spin');
-                statusText.innerText = 'กำลังบันทึก (Cloud)...';
+                statusBox.className = 'flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium bg-cib-yellow/20 text-cib-yellow border border-cib-yellow/50';
+                statusIcon.setAttribute('data-lucide', 'loader-2'); statusIcon.classList.add('animate-spin'); statusText.innerText = `กำลังส่งไปแท็บ ${currentMonthFilter}...`;
             } else if (status === 'saved') {
-                statusBox.className = 'flex items-center gap-2 px-3 py-1.5 md:px-4 md:py-2 rounded-full text-xs md:text-sm font-medium transition-colors duration-300 bg-emerald-500/20 text-emerald-400 border border-emerald-500/50';
-                statusIcon.setAttribute('data-lucide', 'check-circle-2');
-                statusIcon.classList.remove('animate-spin');
-                statusText.innerText = `บันทึกสำเร็จ (${new Date().toLocaleTimeString('th-TH')})`;
+                statusBox.className = 'flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium bg-emerald-500/20 text-emerald-400 border border-emerald-500/50';
+                statusIcon.setAttribute('data-lucide', 'check-circle-2'); statusIcon.classList.remove('animate-spin'); statusText.innerText = `บันทึกแท็บ ${currentMonthFilter} สำเร็จ`;
+            } else if (status === 'error') {
+                statusBox.className = 'flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium bg-rose-500/20 text-rose-400 border border-rose-500/50';
+                statusIcon.setAttribute('data-lucide', 'x-circle'); statusIcon.classList.remove('animate-spin'); statusText.innerText = 'บันทึกไม่สำเร็จ! เช็คสิทธิ์ใน Apps Script';
             } else {
-                statusBox.className = 'flex items-center gap-2 px-3 py-1.5 md:px-4 md:py-2 rounded-full text-xs md:text-sm font-medium transition-colors duration-300 bg-white/5 text-slate-400 border border-white/10';
-                statusIcon.setAttribute('data-lucide', 'cloud-on');
-                statusIcon.classList.remove('animate-spin');
-                statusText.innerText = 'ข้อมูลซิงค์เรียบร้อย';
+                statusBox.className = 'flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium bg-white/5 text-slate-400 border border-white/10';
+                statusIcon.setAttribute('data-lucide', 'cloud-on'); statusIcon.classList.remove('animate-spin'); statusText.innerText = `ข้อมูลซิงค์ตรงกัน (แท็บ ${currentMonthFilter})`;
             }
             lucide.createIcons();
         }
 
         function simulateSave(rowId, colKey, newValue, originalValue) {
             if (newValue === originalValue) return;
-            
             const row = data.find(r => r.id === rowId);
-            if (row) {
-                row[colKey] = newValue;
-            } else {
-                 let newRow = { id: rowId, col1: '', col2: '', col3: '', col4: '', col5: '', col6: '', col7: '', col8: '', col9: '', col10: '', col11: '', col12: '' };
-                 newRow[colKey] = newValue;
-                 data.push(newRow);
-            }
-            
-            updateAllStats();
-            updateMonthlyStats(data.filter(r => !r.col1 || r.col1.startsWith(currentMonthFilter)));
+            if (row) { row[colKey] = newValue; } else { let newRow = { id: rowId, col1: '', col2: '', col3: '', col4: '', col5: '', col6: '', col7: '', col8: '', col9: '', col10: '', col11: '', col12: '' }; newRow[colKey] = newValue; data.push(newRow); }
+            updateAllStats(); 
             
             updateStatusUI('saving');
             clearTimeout(saveTimeout);
-            clearTimeout(resetTimeout);
-            
             saveTimeout = setTimeout(() => {
-                saveDataToGoogleSheet();
-                updateStatusUI('saved');
-                resetTimeout = setTimeout(() => updateStatusUI('idle'), 3000);
+                saveDataToGoogleSheet()
+                    .then(() => {
+                        updateStatusUI('saved');
+                        setTimeout(() => updateStatusUI('idle'), 4000);
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        updateStatusUI('error');
+                    });
             }, 1000);
         }
 
-        // ================= จัดการลบ (Modal) =================
-        function openDeleteModal(id) {
-            currentDeleteId = id;
-            const modal = document.getElementById('deleteModal');
-            const modalContent = document.getElementById('deleteModalContent');
-            modal.classList.remove('hidden');
-            void modal.offsetWidth; 
-            modal.classList.remove('opacity-0');
-            modalContent.classList.remove('scale-95');
-        }
-
-        function closeDeleteModal() {
-            const modal = document.getElementById('deleteModal');
-            const modalContent = document.getElementById('deleteModalContent');
-            modal.classList.add('opacity-0');
-            modalContent.classList.add('scale-95');
-            setTimeout(() => { modal.classList.add('hidden'); currentDeleteId = null; }, 300);
-        }
-
+        function openDeleteModal(id) { currentDeleteId = id; document.getElementById('deleteModal').classList.remove('hidden'); setTimeout(() => document.getElementById('deleteModal').classList.remove('opacity-0'), 10); }
+        function closeDeleteModal() { document.getElementById('deleteModal').classList.add('opacity-0'); setTimeout(() => document.getElementById('deleteModal').classList.add('hidden'), 300); }
         function confirmDelete() {
             if (currentDeleteId !== null) {
-                data = data.filter(r => r.id !== currentDeleteId);
-                closeDeleteModal();
-                renderTable();
-                updateAllStats();
-                updateMonthlyStats(data.filter(r => !r.col1 || r.col1.startsWith(currentMonthFilter)));
-                
+                data = data.filter(r => r.id !== currentDeleteId); closeDeleteModal(); renderTable(); updateAllStats();
                 updateStatusUI('saving');
-                saveDataToGoogleSheet(); 
-                
-                clearTimeout(saveTimeout);
-                clearTimeout(resetTimeout);
-                saveTimeout = setTimeout(() => {
-                    updateStatusUI('saved');
-                    resetTimeout = setTimeout(() => updateStatusUI('idle'), 3000);
-                }, 1000);
+                saveDataToGoogleSheet().then(() => updateStatusUI('saved')).catch(() => updateStatusUI('error'));
             }
         }
 
-        // ================= สร้างตาราง (Dark Mode) =================
         function renderTable() {
-            const tbody = document.getElementById('tableBody');
-            tbody.innerHTML = '';
-
-            let filteredRows = data.filter(row => !row.col1 || row.col1.startsWith(currentMonthFilter));
+            const tbody = document.getElementById('tableBody'); tbody.innerHTML = '';
             
-            const MIN_ROWS = 10;
-            if (filteredRows.length < MIN_ROWS) {
-                for (let i = 0; i < (MIN_ROWS - filteredRows.length); i++) {
-                    const newRow = { id: Date.now() + Math.random(), col1: '', col2: '', col3: '', col4: '', col5: '', col6: '', col7: '', col8: '', col9: '', col10: '', col11: '', col12: '' };
+            // ข้อมูลทั้งหมดตอนนี้คือข้อมูลเฉพาะเดือนที่เลือกแล้ว
+            let filteredRows = data;
+            
+            // รักษากรอบตารางให้มีอย่างน้อย 10 บรรทัด
+            if (filteredRows.length < 10) { 
+                for (let i = 0; i < (10 - filteredRows.length); i++) { 
+                    const newRow = { id: Date.now() + Math.random(), col1: '', col2: '', col3: '', col4: '', col5: '', col6: '', col7: '', col8: '', col9: '', col10: '', col11: '', col12: '' }; 
                     data.push(newRow); 
-                    filteredRows.push(newRow);
-                }
+                } 
             }
 
-            filteredRows.forEach((row, rowIndex) => {
-                const tr = document.createElement('tr');
-                tr.className = `border-b border-white/5 transition-colors duration-200 hover:bg-white/[0.05] ${rowIndex % 2 === 0 ? 'bg-transparent' : 'bg-white/[0.02]'}`;
-
+            data.forEach((row, rowIndex) => {
+                const tr = document.createElement('tr'); tr.className = `border-b border-white/5 hover:bg-white/[0.05] ${rowIndex % 2 === 0 ? 'bg-transparent' : 'bg-white/[0.02]'}`;
                 columns.forEach(colKey => {
-                    const td = document.createElement('td');
-                    td.className = 'border-r border-white/5 p-0 relative h-12 md:h-14 group';
-
-                    let inputElement;
-                    const baseClass = 'w-full h-full py-2.5 px-3 md:py-3 md:px-4 bg-transparent text-xs md:text-sm text-slate-300 transition-all border-none outline-none focus:bg-[#0c162d] focus:ring-1 focus:ring-inset focus:ring-cib-yellow/50';
+                    const td = document.createElement('td'); td.className = 'border-r border-white/5 p-0 h-14 relative';
+                    let input; const baseClass = 'w-full h-full py-3 px-4 bg-transparent text-sm text-slate-300 outline-none focus:bg-[#0c162d] focus:ring-1 focus:ring-cib-yellow/50';
                     
-                    if (colKey === 'col1' || colKey === 'col8') {
-                        inputElement = document.createElement('input');
-                        inputElement.type = 'date';
-                        inputElement.value = row[colKey];
-                        inputElement.className = baseClass;
-                    } else if (colKey === 'col3' || colKey === 'col5' || colKey === 'col6' || colKey === 'col9' || colKey === 'col10' || colKey === 'col11' || colKey === 'col12') {
-                        inputElement = document.createElement('select');
-                        inputElement.className = baseClass + ' custom-select';
-                        let options = [];
-                        if(colKey === 'col3') options = ['', '03', '05'];
-                        if(colKey === 'col5') options = ['', 'พี่ยอด', 'เบียร์', 'ตุ๋น', 'วาวา', 'สุ'];
-                        if(colKey === 'col6') options = ['', 'ตั้งแท่น', 'อยู่ระหว่างดำเนินการ', 'เสร็จสิ้น'];
-                        if(colKey === 'col9') options = ['', 'ประชุม', 'ไม่ประชุม'];
-                        if(colKey === 'col10') options = ['', 'รองพิเซษฐ์', 'รองจักรกริช', 'รองกฤษฎาพร', 'รองณภัชนันธ์'];
-                        if(colKey === 'col11') options = ['', 'QR Code', 'E-mail', '-'];
-                        if(colKey === 'col12') options = ['', 'ตอบรับ', 'ยังไม่ตอบรับ', '-'];
-                        
-                        options.forEach(val => {
-                            const opt = document.createElement('option');
-                            opt.value = val;
-                            opt.text = val === '' ? '-' : val;
-                            opt.className = 'bg-dark-panel text-slate-200';
-                            if (row[colKey] === val) opt.selected = true;
-                            inputElement.appendChild(opt);
-                        });
-                    } else {
-                        inputElement = document.createElement('input');
-                        inputElement.type = 'text';
-                        inputElement.value = row[colKey] || '';
-                        inputElement.className = baseClass + (colKey === 'col4' ? ' font-medium text-white' : '');
-                        inputElement.placeholder = '...';
-                    }
+                    if (colKey === 'col1' || colKey === 'col8') { input = document.createElement('input'); input.type = 'date'; input.value = row[colKey]; input.className = baseClass; }
+                    else if (['col3','col5','col6','col9','col10','col11','col12'].includes(colKey)) {
+                        input = document.createElement('select'); input.className = baseClass + ' custom-select';
+                        let opts = [''];
+                        if(colKey==='col3') opts=['','03','05']; if(colKey==='col5') opts=['','พี่ยอด','เบียร์','ตุ๋น','วาวา','สุ']; if(colKey==='col6') opts=['','ตั้งแท่น','อยู่ระหว่างดำเนินการ','เสร็จสิ้น'];
+                        if(colKey==='col9') opts=['','ประชุม','ไม่ประชุม']; if(colKey==='col10') opts=['','รองพิเซษฐ์','รองจักรกริช','รองกฤษฎาพร','รองณภัชนันธ์'];
+                        if(colKey==='col11') opts=['','QR Code','E-mail','-']; if(colKey==='col12') opts=['','ตอบรับ','ยังไม่ตอบรับ','-'];
+                        opts.forEach(v => { const o = document.createElement('option'); o.value=v; o.text=v||'-'; o.className='bg-dark-panel'; if(row[colKey]===v) o.selected=true; input.appendChild(o); });
+                    } else { input = document.createElement('input'); input.type = 'text'; input.value = row[colKey]||''; input.className = baseClass + (colKey==='col4'?' text-white font-medium':''); }
 
-                    let originalValue = row[colKey] || '';
-                    inputElement.addEventListener('focus', function() { originalValue = this.value; });
-                    if (inputElement.tagName === 'SELECT') inputElement.addEventListener('change', function() { simulateSave(row.id, colKey, this.value, originalValue); });
-                    else inputElement.addEventListener('blur', function() { simulateSave(row.id, colKey, this.value, originalValue); });
-
-                    td.appendChild(inputElement);
-                    tr.appendChild(td);
+                    let orig = row[colKey]||''; input.addEventListener('focus', function(){ orig=this.value; });
+                    input.addEventListener(input.tagName==='SELECT'?'change':'blur', function(){ simulateSave(row.id, colKey, this.value, orig); });
+                    td.appendChild(input); tr.appendChild(td);
                 });
-
-                const actionTd = document.createElement('td');
-                actionTd.className = 'p-0 relative h-12 md:h-14 text-center align-middle';
-                const deleteBtn = document.createElement('button');
-                deleteBtn.className = 'p-2 text-rose-500/70 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-colors mx-auto inline-flex items-center justify-center';
-                deleteBtn.onclick = () => openDeleteModal(row.id);
-                deleteBtn.innerHTML = '<i data-lucide="trash-2" class="w-4 h-4 md:w-5 md:h-5"></i>';
-                actionTd.appendChild(deleteBtn);
-                tr.appendChild(actionTd);
-
-                tbody.appendChild(tr);
+                const actTd = document.createElement('td'); actTd.className = 'text-center';
+                actTd.innerHTML = `<button onclick="openDeleteModal(${row.id})" class="p-2 text-rose-500/70 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg"><i data-lucide="trash-2" class="w-5 h-5"></i></button>`;
+                tr.appendChild(actTd); tbody.appendChild(tr);
             });
-
-            updateMonthlyStats(filteredRows);
             lucide.createIcons();
         }
 
-        // Initialize UI 
-        populateMonthYear();
-        switchPage('dashboard');
+        populateMonthYear(); switchPage('dashboard');
     </script>
 </body>
 </html>
-```
