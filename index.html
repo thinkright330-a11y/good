@@ -384,8 +384,8 @@
             const select = document.getElementById('monthYearSelect');
             const monthLabel = select.options[select.selectedIndex].text;
 
-            const total03 = data.filter(d => d.col3 === '03').length;
-            const total05 = data.filter(d => d.col3 === '05').length;
+            const total03 = data.filter(d => String(d.col3) === '03' || String(d.col3) === '3').length;
+            const total05 = data.filter(d => String(d.col3) === '05' || String(d.col3) === '5').length;
 
             myChart = new Chart(ctx, { 
                 type: 'bar', 
@@ -419,8 +419,8 @@
             document.getElementById('stat-completed').innerText = validData.filter(d => d.col6 === 'เสร็จสิ้น').length;
             
             // อัปเดตกล่องสถิติ 03 / 05 ในหน้าจัดการเอกสาร
-            const rows03 = validData.filter(d => d.col3 === '03');
-            const rows05 = validData.filter(d => d.col3 === '05');
+            const rows03 = validData.filter(d => String(d.col3) === '03' || String(d.col3) === '3');
+            const rows05 = validData.filter(d => String(d.col3) === '05' || String(d.col3) === '5');
 
             if(document.getElementById('stat-month-03-total')) {
                 document.getElementById('stat-month-03-total').innerText = rows03.length;
@@ -513,7 +513,18 @@
                         if(colKey==='col3') opts=['','03','05']; if(colKey==='col5') opts=['','พี่ยอด','เบียร์','ตุ๋น','วาวา','สุ']; if(colKey==='col6') opts=['','ตั้งแท่น','อยู่ระหว่างดำเนินการ','เสร็จสิ้น'];
                         if(colKey==='col9') opts=['','ประชุม','ไม่ประชุม']; if(colKey==='col10') opts=['','รองพิเซษฐ์','รองจักรกริช','รองกฤษฎาพร','รองณภัชนันธ์'];
                         if(colKey==='col11') opts=['','QR Code','E-mail','-']; if(colKey==='col12') opts=['','ตอบรับ','ยังไม่ตอบรับ','-'];
-                        opts.forEach(v => { const o = document.createElement('option'); o.value=v; o.text=v||'-'; o.className='bg-dark-panel'; if(row[colKey]===v) o.selected=true; input.appendChild(o); });
+                        opts.forEach(v => { 
+                            const o = document.createElement('option'); 
+                            o.value=v; 
+                            o.text=v||'-'; 
+                            o.className='bg-dark-panel'; 
+                            
+                            let cellVal = row[colKey] != null ? String(row[colKey]) : '';
+                            if (colKey === 'col3' && (cellVal === '3' || cellVal === '5')) cellVal = '0' + cellVal;
+                            
+                            if(cellVal === String(v)) o.selected=true; 
+                            input.appendChild(o); 
+                        });
                     } else { input = document.createElement('input'); input.type = 'text'; input.value = row[colKey]||''; input.className = baseClass + (colKey==='col4'?' text-white font-medium':''); }
 
                     let orig = row[colKey]||''; input.addEventListener('focus', function(){ orig=this.value; });
