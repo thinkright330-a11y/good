@@ -56,6 +56,14 @@
         
         .loader { border: 4px solid rgba(255, 255, 255, 0.1); border-left-color: #FFC72C; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        /* คลาสสำหรับล็อคคอลัมน์ (Sticky Column) */
+        .sticky-col { position: sticky; left: 0; z-index: 20; }
+        tr:nth-child(odd) .sticky-col { background-color: #0b1426; }
+        tr:nth-child(even) .sticky-col { background-color: #0e182e; }
+        tr:hover .sticky-col { background-color: #162640 !important; }
+        th.sticky-col { background-color: #122340 !important; z-index: 30; }
+        .sticky-col::after { content: ''; position: absolute; top: 0; right: 0; bottom: 0; width: 8px; background: linear-gradient(to right, rgba(0,0,0,0.3), transparent); transform: translateX(100%); pointer-events: none; }
     </style>
 </head>
 <body class="bg-dark-bg font-sans text-slate-300 h-screen flex overflow-hidden selection:bg-cib-yellow selection:text-black">
@@ -63,10 +71,8 @@
 
     <div id="pin-screen" class="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-dark-bg/95 backdrop-blur-xl transition-opacity duration-500 p-4">
         <div class="flex gap-4 md:gap-5 mb-8">
-            <img src="https://cib.go.th/uploads/about_agency/logo/CIB_Profile_Image_4e029ae750_b45afc9574.png" alt="CIB" class="w-20 h-20 md:w-24 md:h-24 rounded-2xl shadow-glow-blue border border-[#1e325c] object-cover bg-dark-bg">
-            <div class="w-20 h-20 md:w-24 md:h-24 rounded-2xl shadow-glow-blue border border-[#1e325c] bg-white flex items-center justify-center">
-                <i data-lucide="shield" class="w-10 h-10 md:w-12 md:h-12 text-[#002855]"></i>
-            </div>
+            <img src="./cib-logo.png" onerror="this.src='https://cib.go.th/uploads/about_agency/logo/CIB_Profile_Image_4e029ae750_b45afc9574.png'" alt="CIB" class="w-20 h-20 md:w-24 md:h-24 rounded-2xl shadow-glow-blue border border-[#1e325c] object-cover bg-dark-bg">
+            <img src="./tcsd-logo.png" onerror="this.style.display='none'" alt="TCSD" class="w-20 h-20 md:w-24 md:h-24 rounded-2xl shadow-glow-blue border border-[#1e325c] object-cover bg-white">
         </div>
         <div id="pin-box" class="glass-panel p-6 md:p-10 rounded-3xl shadow-[0_0_50px_rgba(0,0,0,0.5)] border border-white/10 flex flex-col items-center w-full max-w-sm transform transition-all relative overflow-hidden">
             <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-cib-yellow to-transparent opacity-50"></div>
@@ -89,14 +95,13 @@
     </div>
 
     <div id="app-wrapper" class="flex w-full h-full opacity-0 pointer-events-none transition-opacity duration-500 z-10 relative">
+        
         <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-72 bg-[#040914]/95 backdrop-blur-xl border-r border-dark-border transform -translate-x-full md:translate-x-0 transition-transform duration-300 shadow-2xl md:static md:flex md:flex-col">
             <div class="p-8 flex flex-col items-center justify-center mt-2 relative">
                 <div class="absolute top-0 w-full h-[1px] bg-gradient-to-r from-transparent via-dark-border to-transparent"></div>
                 <div class="flex gap-3 mb-6 relative">
-                    <img src="https://cib.go.th/uploads/about_agency/logo/CIB_Profile_Image_4e029ae750_b45afc9574.png" class="w-14 h-14 rounded-2xl border border-[#1e325c] object-cover bg-dark-bg relative z-10">
-                    <div class="w-14 h-14 rounded-2xl border border-[#1e325c] bg-white flex items-center justify-center relative z-10">
-                        <i data-lucide="shield" class="w-8 h-8 text-[#002855]"></i>
-                    </div>
+                    <img src="./cib-logo.png" onerror="this.src='https://cib.go.th/uploads/about_agency/logo/CIB_Profile_Image_4e029ae750_b45afc9574.png'" class="w-14 h-14 rounded-2xl border border-[#1e325c] object-cover bg-dark-bg relative z-10">
+                    <img src="./tcsd-logo.png" onerror="this.style.display='none'" class="w-14 h-14 rounded-2xl border border-[#1e325c] object-cover bg-white relative z-10">
                 </div>
                 <h2 class="text-xl font-heading font-bold text-cib-yellow text-center tracking-wide">เอกสาร ฝอ.</h2>
             </div>
@@ -121,12 +126,8 @@
                 <div id="page-dashboard" class="fade-in block max-w-7xl mx-auto">
                     <div class="flex flex-col items-center py-6 mb-8 relative">
                         <div class="flex gap-6 mb-8 z-10">
-                            <a href="https://www.cib.go.th/" target="_blank"><img src="https://cib.go.th/uploads/about_agency/logo/CIB_Profile_Image_4e029ae750_b45afc9574.png" class="w-28 h-28 rounded-[2rem] border border-[#1e325c] object-cover bg-dark-bg hover:scale-105 transition-transform"></a>
-                            <a href="https://tcsd.cib.go.th/home" target="_blank">
-                                <div class="w-28 h-28 rounded-[2rem] border border-[#1e325c] bg-white flex items-center justify-center hover:scale-105 transition-transform">
-                                    <i data-lucide="shield" class="w-16 h-16 text-[#002855]"></i>
-                                </div>
-                            </a>
+                            <a href="https://www.cib.go.th/" target="_blank"><img src="./cib-logo.png" onerror="this.src='https://cib.go.th/uploads/about_agency/logo/CIB_Profile_Image_4e029ae750_b45afc9574.png'" class="w-28 h-28 rounded-[2rem] border border-[#1e325c] object-cover bg-dark-bg hover:scale-105 transition-transform"></a>
+                            <a href="https://tcsd.cib.go.th/home" target="_blank"><img src="./tcsd-logo.png" onerror="this.style.display='none'" class="w-28 h-28 rounded-[2rem] border border-[#1e325c] object-cover bg-white hover:scale-105 transition-transform"></a>
                         </div>
                         <h1 class="text-2xl md:text-5xl font-heading font-bold text-white text-center mb-6">ฝอ.(งานป้องกันปราบปราม,ยุทธศาสตร์) บก.ปอท.</h1>
                         
@@ -262,27 +263,20 @@
                             </div>
                         </div>
                         <div class="overflow-x-auto w-full custom-scrollbar pb-2">
-                            <!-- ขยายขนาดตารางเพื่อรองรับ 5 คอลัมน์ใหม่ -->
                             <table class="w-full text-left min-w-[2600px]">
                                 <thead>
                                     <tr class="border-b border-white/10 bg-white/[0.03]">
-                                        <th class="py-4 px-4 text-sm font-heading font-medium text-slate-300 border-r w-36">วันที่</th>
-                                        <th class="py-4 px-4 text-sm font-heading font-medium text-slate-300 border-r min-w-[120px]">เลขรับ บก.</th>
-                                        <th class="py-4 px-4 text-sm font-heading font-medium text-slate-300 border-r w-24">03/05</th>
-                                        <th class="py-4 px-4 text-sm font-heading font-medium text-cib-yellow border-r min-w-[300px]">เรื่อง (คลิกเพื่อแก้ไข)</th>
-                                        <th class="py-4 px-4 text-sm font-heading font-medium text-slate-300 border-r min-w-[160px]">ผู้รับผิดชอบ</th>
-                                        
-                                        <!-- คอลัมน์ใหม่ที่ 1 และ 2 -->
-                                        <th class="py-4 px-4 text-sm font-heading font-medium text-slate-300 border-r min-w-[160px]">กก.ที่รับเรื่อง</th>
+                                    <th class="py-4 px-4 text-sm font-heading font-medium text-slate-300 border-r w-36">วันที่</th>
+                                    <th class="py-4 px-4 text-sm font-heading font-medium text-slate-300 border-r min-w-[120px]">เลขรับ บก.</th>
+                                    <th class="py-4 px-4 text-sm font-heading font-medium text-slate-300 border-r w-24">03/05</th>
+                                    <th class="py-4 px-4 text-sm font-heading font-medium text-cib-yellow border-r min-w-[300px] sticky-col">เรื่อง (คลิกเพื่อแก้ไข)</th>
+                                    <th class="py-4 px-4 text-sm font-heading font-medium text-slate-300 border-r min-w-[160px]">ผู้รับผิดชอบ</th>
+                                    <th class="py-4 px-4 text-sm font-heading font-medium text-slate-300 border-r min-w-[160px]">กก.ที่รับเรื่อง</th>
                                         <th class="py-4 px-4 text-sm font-heading font-medium text-slate-300 border-r min-w-[160px]">กก.ตอบงาน</th>
-                                        
                                         <th class="py-4 px-4 text-sm font-heading font-medium text-rose-400 border-r w-36">วันกำหนดส่ง</th>
-                                        
-                                        <!-- คอลัมน์ใหม่ที่ 3, 4 และ 5 -->
                                         <th class="py-4 px-4 text-sm font-heading font-medium text-slate-300 border-r min-w-[180px]">เลขหนังสือ/ลงวันที่</th>
                                         <th class="py-4 px-4 text-sm font-heading font-medium text-slate-300 border-r min-w-[160px]">สถานะหนังสือ</th>
                                         <th class="py-4 px-4 text-sm font-heading font-medium text-slate-300 border-r min-w-[180px]">หน่วยที่รับเรื่อง</th>
-                                        
                                         <th class="py-4 px-4 text-sm font-heading font-medium text-slate-300 border-r min-w-[200px]">สถานะเอกสาร</th>
                                         <th class="py-4 px-4 text-sm font-heading font-medium text-slate-300 border-r min-w-[200px]">เลขหนังสือส่ง/ลงวันที่</th>
                                         <th class="py-4 px-4 text-sm font-heading font-medium text-slate-300 border-r w-36">วันที่เสร็จ</th>
@@ -297,7 +291,6 @@
                             </table>
                         </div>
                         
-                        <!-- ปุ่มเพิ่มแถวใหม่ -->
                         <div class="p-4 bg-white/[0.01] border-t border-white/5">
                             <button onclick="addNewRow()" class="w-full py-3 border-2 border-dashed border-white/10 rounded-xl text-slate-400 hover:text-cib-yellow hover:border-cib-yellow/50 transition-all flex items-center justify-center gap-2 font-medium hover:bg-white/[0.02]">
                                 <i data-lucide="plus" class="w-5 h-5"></i> เพิ่มข้อมูลแถวใหม่
@@ -322,13 +315,12 @@
 
     <script>
         // =========================================================
-        // 🛑 ใส่ URL ของ GOOGLE APPS SCRIPT ของคุณตรงนี้ 🛑
-        const GOOGLE_SHEET_URL = 'https://script.google.com/macros/s/AKfycbyj3WXfKXi4W6SOFY06AI3sa9lGxyxPFHpmkBpQ86LKzK1vr3t_TemadLwVIaTZs_PY/exec'; 
+        // 🛑 นำ URL จาก Google Apps Script (อันใหม่ล่าสุด) มาวางที่นี่ 🛑
+        const GOOGLE_SHEET_URL = 'https://script.google.com/macros/s/AKfycbwGyroh2bChPhdQwBl1Dny5bhWBCG-3aZTFSFTiOqtjeqTRoYi87wfIDjeK1npc3gog/exec'; 
         // =========================================================
 
         let data = []; 
         let yearlyData = []; 
-        // เรียงลำดับคอลัมน์ใหม่ตามที่คุณระบุ
         const columns = ['col1', 'col2', 'col3', 'col4', 'col5', 'col14', 'col15', 'col13', 'col16', 'col17', 'col18', 'col6', 'col7', 'col8', 'col9', 'col10', 'col11', 'col12'];
         let saveTimeout; 
         let currentMonthFilter = ''; 
@@ -347,7 +339,7 @@
             setTimeout(() => document.getElementById('loading-screen').classList.remove('opacity-0'), 50);
             
             if (!GOOGLE_SHEET_URL || GOOGLE_SHEET_URL.includes('ใส่_URL')) {
-                alert("กรุณาใส่ URL ของ Google Apps Script ในโค้ดก่อนครับ");
+                console.warn("ยังไม่ได้ใส่ URL ของ Google Apps Script โหลดข้อมูลจำลองแทน");
                 loadDummyData(); return;
             }
 
@@ -379,7 +371,9 @@
                 updateStatusUI('error');
                 return Promise.resolve(); 
             }
+            
             const payload = { month: currentMonthFilter, data: data };
+
             return fetch(GOOGLE_SHEET_URL, {
                 method: 'POST',
                 body: JSON.stringify(payload)
@@ -455,7 +449,70 @@
             document.querySelectorAll('.nav-btn').forEach(btn => btn.className = 'nav-btn w-full flex items-center gap-4 px-5 py-3.5 rounded-xl text-slate-300 hover:bg-dark-hover hover:text-white font-medium');
             document.getElementById('nav-' + pageId).className = 'nav-btn w-full flex items-center gap-4 px-5 py-3.5 rounded-xl bg-cib-yellow text-dark-bg font-bold';
             
-            if(pageId === 'dashboard') { setTimeout(() => { updateChart(); }, 100); }
+            if(pageId === 'dashboard') {
+                setTimeout(() => { updateChart(); }, 100); 
+            }
+        }
+
+        // ระบบแยกแยะเดือนและข้อมูลอัจฉริยะ (แก้บั๊กข้อมูลมั่วข้ามเดือน)
+        function getMergedValidRows() {
+            let allRowsMap = new Map();
+            
+            // 1. นำข้อมูลทั้งปีมาจำแนกก่อน
+            if (Array.isArray(yearlyData)) {
+                yearlyData.forEach(d => {
+                    if (!d || (!d.col1 && !d.col4)) return; // ข้ามแถวที่ว่างเปล่า
+
+                    let m = -1;
+                    // แกะเดือนจากวันที่ (ถ้ามี)
+                    if (d.col1 && typeof d.col1 === 'string') {
+                        let dateStr = d.col1.trim();
+                        if (dateStr.includes('-')) {
+                            let parts = dateStr.split('-');
+                            if (parts.length >= 2) m = parseInt(parts[1], 10) - 1;
+                        } else if (dateStr.includes('/')) {
+                            let parts = dateStr.split('/');
+                            if (parts.length >= 2) m = parseInt(parts[1], 10) - 1;
+                        }
+                    }
+
+                    // ถ้าไม่ได้ใส่วันที่ ให้ยึดจากแท็บที่มันถูกบันทึกไว้ใน Google Sheet
+                    if ((m < 0 || m > 11 || isNaN(m)) && d.sheetMonth !== undefined) {
+                        m = parseInt(d.sheetMonth, 10);
+                    }
+
+                    if (m < 0 || m > 11 || isNaN(m)) return; // ถ้าหาเดือนไม่ได้เลย ให้ปัดตกไปก่อน
+                    allRowsMap.set(String(d.id), {...d, finalMonth: m});
+                });
+            }
+
+            // 2. นำข้อมูลของแท็บเดือนปัจจุบันมาประมวลผลทับลงไป
+            let currentMIndex = currentMonthFilter ? parseInt(currentMonthFilter.split('-')[1], 10) - 1 : new Date().getMonth();
+            if (Array.isArray(data)) {
+                data.forEach(d => {
+                    if (!d || (!d.col1 && !d.col4)) return;
+
+                    let m = -1;
+                    if (d.col1 && typeof d.col1 === 'string') {
+                        let dateStr = d.col1.trim();
+                        if (dateStr.includes('-')) {
+                            let parts = dateStr.split('-');
+                            if (parts.length >= 2) m = parseInt(parts[1], 10) - 1;
+                        } else if (dateStr.includes('/')) {
+                            let parts = dateStr.split('/');
+                            if (parts.length >= 2) m = parseInt(parts[1], 10) - 1;
+                        }
+                    }
+
+                    if (m < 0 || m > 11 || isNaN(m)) {
+                        m = currentMIndex; 
+                    }
+
+                    allRowsMap.set(String(d.id), {...d, finalMonth: m});
+                });
+            }
+
+            return Array.from(allRowsMap.values());
         }
 
         function updateChart() {
@@ -483,21 +540,7 @@
             let monthlyTotals = new Array(12).fill(0);
             let statusCounts = { draft: 0, inProgress: 0, completed: 0 };
 
-            let allRowsMap = new Map();
-            if (Array.isArray(yearlyData)) yearlyData.forEach(d => { 
-                if(d && d.id) {
-                    let key = (d.sheetMonth !== undefined ? d.sheetMonth : -1) + "_" + d.id;
-                    allRowsMap.set(key, {...d}); 
-                }
-            });
-            if (Array.isArray(data)) data.forEach(d => { 
-                if(d && d.id) {
-                    let currentMIndex = currentMonthFilter ? parseInt(currentMonthFilter.split('-')[1], 10) - 1 : -1;
-                    allRowsMap.set(currentMIndex + "_" + d.id, {...d, sheetMonth: currentMIndex}); 
-                }
-            });
-
-            let validRows = Array.from(allRowsMap.values()).filter(d => (d.col1 && d.col1.trim() !== '') || (d.col4 && d.col4.trim() !== ''));
+            let validRows = getMergedValidRows();
 
             validRows.forEach(d => {
                 let status = String(d.col6 || '').trim();
@@ -505,21 +548,7 @@
                 else if(status === 'อยู่ระหว่างดำเนินการ') statusCounts.inProgress++;
                 else if(status === 'เสร็จสิ้น') statusCounts.completed++;
 
-                let m = d.sheetMonth;
-                if (m === undefined || m < 0 || m > 11 || isNaN(m)) {
-                    if (d.col1 && d.col1.trim() !== '') {
-                        let dateObj = new Date(d.col1);
-                        if (!isNaN(dateObj.getTime())) m = dateObj.getMonth(); 
-                        else {
-                            let parts = d.col1.split(/[-/]/);
-                            if (parts.length >= 2) m = parseInt(parts[1], 10) - 1;
-                        }
-                    }
-                }
-                if (m === undefined || m < 0 || m > 11 || isNaN(m)) {
-                    m = currentMonthFilter ? parseInt(currentMonthFilter.split('-')[1], 10) - 1 : new Date().getMonth();
-                }
-
+                let m = d.finalMonth;
                 if (m >= 0 && m <= 11) {
                     let type = String(d.col3 || '').trim();
                     if (type.includes('3')) counts03[m]++;
@@ -551,20 +580,7 @@
         }
 
         function updateAllStats() {
-            let allRowsMap = new Map();
-            let currentMIndex = currentMonthFilter ? parseInt(currentMonthFilter.split('-')[1], 10) - 1 : -1;
-
-            if (Array.isArray(yearlyData)) yearlyData.forEach(d => { 
-                if(d && d.id) {
-                    let m = d.sheetMonth !== undefined ? d.sheetMonth : -1;
-                    allRowsMap.set(m + "_" + d.id, {...d}); 
-                }
-            });
-            if (Array.isArray(data)) data.forEach(d => { 
-                if(d && d.id) allRowsMap.set(currentMIndex + "_" + d.id, {...d, sheetMonth: currentMIndex}); 
-            });
-            
-            let validYearData = Array.from(allRowsMap.values()).filter(d => (d.col1 && d.col1.trim() !== '') || (d.col4 && d.col4.trim() !== ''));
+            let validYearData = getMergedValidRows();
 
             if(document.getElementById('stat-year-total')) {
                 document.getElementById('stat-year-total').innerText = validYearData.length;
@@ -612,11 +628,21 @@
         function simulateSave(rowId, colKey, newValue, originalValue) {
             if (newValue === originalValue) return;
             const row = data.find(r => r.id === rowId);
-            if (row) { row[colKey] = newValue; } else { let newRow = { id: rowId, col1: '', col2: '', col3: '', col4: '', col5: '', col14: '', col15: '', col13: '', col16: '', col17: '', col18: '', col6: '', col7: '', col8: '', col9: '', col10: '', col11: '', col12: '' }; newRow[colKey] = newValue; data.push(newRow); }
+            if (row) { 
+                row[colKey] = newValue; 
+            } else { 
+                let newRow = { id: rowId, col1: '', col2: '', col3: '', col4: '', col5: '', col14: '', col15: '', col13: '', col16: '', col17: '', col18: '', col6: '', col7: '', col8: '', col9: '', col10: '', col11: '', col12: '' }; 
+                newRow[colKey] = newValue; 
+                data.push(newRow); 
+            }
             
             let currentMIndex = currentMonthFilter ? parseInt(currentMonthFilter.split('-')[1], 10) - 1 : -1;
             let yRow = yearlyData.find(r => r.id === rowId && r.sheetMonth === currentMIndex);
-            if(yRow) { yRow[colKey] = newValue; } else { yearlyData.push({...row, sheetMonth: currentMIndex}); }
+            if(yRow) { 
+                yRow[colKey] = newValue; 
+            } else { 
+                yearlyData.push({...row, sheetMonth: currentMIndex}); 
+            }
 
             updateAllStats(); 
             
@@ -649,13 +675,11 @@
             }
         }
 
-        // ฟังก์ชันสำหรับปุ่มเพิ่มแถวใหม่
         function addNewRow() {
             const newRow = { id: Date.now() + Math.random(), col1: '', col2: '', col3: '', col4: '', col5: '', col14: '', col15: '', col13: '', col16: '', col17: '', col18: '', col6: '', col7: '', col8: '', col9: '', col10: '', col11: '', col12: '' };
             data.push(newRow);
             renderTable();
             
-            // เลื่อนหน้าจอลงมาด้านล่างสุดของตารางโดยอัตโนมัติ
             const scrollContainer = document.querySelector('.overflow-y-auto.custom-scrollbar');
             if (scrollContainer) {
                 setTimeout(() => {
@@ -676,12 +700,13 @@
             }
 
             data.forEach((row, rowIndex) => {
-                const tr = document.createElement('tr'); tr.className = `border-b border-white/5 hover:bg-white/[0.05] ${rowIndex % 2 === 0 ? 'bg-transparent' : 'bg-white/[0.02]'}`;
-                columns.forEach(colKey => {
-                    const td = document.createElement('td'); td.className = 'border-r border-white/5 p-0 h-14 relative';
-                    
-                    let isAlert = false;
-                    if (colKey === 'col13' && row[colKey] && row['col6'] !== 'เสร็จสิ้น') {
+            const tr = document.createElement('tr'); tr.className = `border-b border-white/5 hover:bg-white/[0.05] ${rowIndex % 2 === 0 ? 'bg-transparent' : 'bg-white/[0.02]'}`;
+            columns.forEach(colKey => {
+                const td = document.createElement('td'); 
+                td.className = 'border-r border-white/5 p-0 h-14 ' + (colKey === 'col4' ? 'sticky-col' : 'relative');
+                
+                let isAlert = false;
+                if (colKey === 'col13' && row[colKey] && row['col6'] !== 'เสร็จสิ้น') {
                         const dueDate = new Date(row[colKey]);
                         const today = new Date();
                         today.setHours(0,0,0,0);
@@ -708,6 +733,7 @@
                         if(colKey==='col10') opts=['','รองพิเซษฐ์','รองจักรกริช','รองกฤษฎาพร','รองณภัชนันธ์'];
                         if(colKey==='col11') opts=['','QR Code','E-mail','-']; 
                         if(colKey==='col12') opts=['','ตอบรับ','ยังไม่ตอบรับ','-'];
+                        
                         opts.forEach(v => { 
                             const o = document.createElement('option'); o.value=v; o.text=v||'-'; o.className='bg-dark-panel text-slate-200';
                             let cellVal = row[colKey] != null ? String(row[colKey]) : '';
@@ -723,6 +749,7 @@
                     input.addEventListener(input.tagName==='SELECT'?'change':'blur', function(){ simulateSave(row.id, colKey, this.value, orig); });
                     td.appendChild(input); tr.appendChild(td);
                 });
+                
                 const actTd = document.createElement('td'); actTd.className = 'text-center';
                 actTd.innerHTML = `<button onclick="openDeleteModal(${row.id})" class="p-2 text-rose-500/70 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg"><i data-lucide="trash-2" class="w-5 h-5"></i></button>`;
                 tr.appendChild(actTd); tbody.appendChild(tr);
