@@ -58,7 +58,7 @@
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
         /* คลาสสำหรับล็อคคอลัมน์ (Sticky Column) */
-        .sticky-col { position: sticky; left: 0; z-index: 20; }
+        .sticky-col { position: sticky !important; left: 0; z-index: 20; }
         tr:nth-child(odd) .sticky-col { background-color: #0b1426; }
         tr:nth-child(even) .sticky-col { background-color: #0e182e; }
         tr:hover .sticky-col { background-color: #162640 !important; }
@@ -266,12 +266,12 @@
                             <table class="w-full text-left min-w-[2600px]">
                                 <thead>
                                     <tr class="border-b border-white/10 bg-white/[0.03]">
-                                    <th class="py-4 px-4 text-sm font-heading font-medium text-slate-300 border-r w-36">วันที่</th>
-                                    <th class="py-4 px-4 text-sm font-heading font-medium text-slate-300 border-r min-w-[120px]">เลขรับ บก.</th>
-                                    <th class="py-4 px-4 text-sm font-heading font-medium text-slate-300 border-r w-24">03/05</th>
-                                    <th class="py-4 px-4 text-sm font-heading font-medium text-cib-yellow border-r min-w-[300px] sticky-col">เรื่อง (คลิกเพื่อแก้ไข)</th>
-                                    <th class="py-4 px-4 text-sm font-heading font-medium text-slate-300 border-r min-w-[160px]">ผู้รับผิดชอบ</th>
-                                    <th class="py-4 px-4 text-sm font-heading font-medium text-slate-300 border-r min-w-[160px]">กก.ที่รับเรื่อง</th>
+                                        <th class="py-4 px-4 text-sm font-heading font-medium text-slate-300 border-r w-36">วันที่</th>
+                                        <th class="py-4 px-4 text-sm font-heading font-medium text-slate-300 border-r min-w-[120px]">เลขรับ บก.</th>
+                                        <th class="py-4 px-4 text-sm font-heading font-medium text-slate-300 border-r min-w-[120px]">03/05</th>
+                                        <th class="py-4 px-4 text-sm font-heading font-medium text-cib-yellow border-r min-w-[300px] sticky-col">เรื่อง (คลิกเพื่อแก้ไข)</th>
+                                        <th class="py-4 px-4 text-sm font-heading font-medium text-slate-300 border-r min-w-[160px]">ผู้รับผิดชอบ</th>
+                                        <th class="py-4 px-4 text-sm font-heading font-medium text-slate-300 border-r min-w-[160px]">กก.ที่รับเรื่อง</th>
                                         <th class="py-4 px-4 text-sm font-heading font-medium text-slate-300 border-r min-w-[160px]">กก.ตอบงาน</th>
                                         <th class="py-4 px-4 text-sm font-heading font-medium text-rose-400 border-r w-36">วันกำหนดส่ง</th>
                                         <th class="py-4 px-4 text-sm font-heading font-medium text-slate-300 border-r min-w-[180px]">เลขหนังสือ/ลงวันที่</th>
@@ -316,7 +316,7 @@
     <script>
         // =========================================================
         // 🛑 นำ URL จาก Google Apps Script (อันใหม่ล่าสุด) มาวางที่นี่ 🛑
-        const GOOGLE_SHEET_URL = 'https://script.google.com/macros/s/AKfycbwGyroh2bChPhdQwBl1Dny5bhWBCG-3aZTFSFTiOqtjeqTRoYi87wfIDjeK1npc3gog/exec'; 
+        const GOOGLE_SHEET_URL = 'https://script.google.com/macros/s/AKfycbzL57mciKy4ux9DAMGKv1k023OQ8UlYNYIpHFOz25ZdlyXuMdNyG7nRc1aC-B6g1mVn/exec'; 
         // =========================================================
 
         let data = []; 
@@ -454,65 +454,46 @@
             }
         }
 
-        // ระบบแยกแยะเดือนและข้อมูลอัจฉริยะ (แก้บั๊กข้อมูลมั่วข้ามเดือน)
+        // --- อัปเกรดฟังก์ชันวิเคราะห์วันที่อัจฉริยะขั้นสุด ---
         function getMergedValidRows() {
             let allRowsMap = new Map();
-            
-            // 1. นำข้อมูลทั้งปีมาจำแนกก่อน
-            if (Array.isArray(yearlyData)) {
-                yearlyData.forEach(d => {
-                    if (!d || (!d.col1 && !d.col4)) return; // ข้ามแถวที่ว่างเปล่า
+            let currentMIndex = currentMonthFilter ? parseInt(currentMonthFilter.split('-')[1], 10) - 1 : new Date().getMonth();
 
+            if (Array.isArray(yearlyData) && yearlyData.length > 0) {
+                yearlyData.forEach((d, index) => {
+                    if (!d) return;
                     let m = -1;
-                    // แกะเดือนจากวันที่ (ถ้ามี)
-                    if (d.col1 && typeof d.col1 === 'string') {
-                        let dateStr = d.col1.trim();
-                        if (dateStr.includes('-')) {
-                            let parts = dateStr.split('-');
-                            if (parts.length >= 2) m = parseInt(parts[1], 10) - 1;
-                        } else if (dateStr.includes('/')) {
-                            let parts = dateStr.split('/');
-                            if (parts.length >= 2) m = parseInt(parts[1], 10) - 1;
-                        }
-                    }
 
-                    // ถ้าไม่ได้ใส่วันที่ ให้ยึดจากแท็บที่มันถูกบันทึกไว้ใน Google Sheet
-                    if ((m < 0 || m > 11 || isNaN(m)) && d.sheetMonth !== undefined) {
+                    if (d.sheetMonth !== undefined && d.sheetMonth !== -1 && d.sheetMonth !== null) {
                         m = parseInt(d.sheetMonth, 10);
                     }
-
-                    if (m < 0 || m > 11 || isNaN(m)) return; // ถ้าหาเดือนไม่ได้เลย ให้ปัดตกไปก่อน
-                    allRowsMap.set(String(d.id), {...d, finalMonth: m});
-                });
-            }
-
-            // 2. นำข้อมูลของแท็บเดือนปัจจุบันมาประมวลผลทับลงไป
-            let currentMIndex = currentMonthFilter ? parseInt(currentMonthFilter.split('-')[1], 10) - 1 : new Date().getMonth();
-            if (Array.isArray(data)) {
-                data.forEach(d => {
-                    if (!d || (!d.col1 && !d.col4)) return;
-
-                    let m = -1;
-                    if (d.col1 && typeof d.col1 === 'string') {
+                    else if (d.col1 && typeof d.col1 === 'string' && d.col1.trim() !== '') {
                         let dateStr = d.col1.trim();
-                        if (dateStr.includes('-')) {
-                            let parts = dateStr.split('-');
-                            if (parts.length >= 2) m = parseInt(parts[1], 10) - 1;
-                        } else if (dateStr.includes('/')) {
+                        if (dateStr.includes('/')) {
                             let parts = dateStr.split('/');
-                            if (parts.length >= 2) m = parseInt(parts[1], 10) - 1;
+                            if(parts.length >= 2) m = parseInt(parts[1], 10) - 1;
+                        } else if (dateStr.includes('-')) {
+                            let parts = dateStr.split('-');
+                            if(parts.length >= 2) m = parseInt(parts[1], 10) - 1;
                         }
                     }
 
-                    if (m < 0 || m > 11 || isNaN(m)) {
-                        m = currentMIndex; 
-                    }
-
-                    allRowsMap.set(String(d.id), {...d, finalMonth: m});
+                    let rowId = d.id || ('unknown_' + index);
+                    let key = (m !== -1 ? m : 'fallback') + "_" + rowId;
+                    allRowsMap.set(key, {...d, finalMonth: m});
                 });
             }
 
-            return Array.from(allRowsMap.values());
+            if (Array.isArray(data) && data.length > 0) {
+                data.forEach((d, index) => {
+                    if (!d) return;
+                    let rowId = d.id || ('unknown_' + index);
+                    let key = currentMIndex + "_" + rowId;
+                    allRowsMap.set(key, {...d, finalMonth: currentMIndex});
+                });
+            }
+
+            return Array.from(allRowsMap.values()).filter(d => (d.col1 && d.col1.trim() !== '') || (d.col4 && d.col4.trim() !== ''));
         }
 
         function updateChart() {
@@ -549,10 +530,14 @@
                 else if(status === 'เสร็จสิ้น') statusCounts.completed++;
 
                 let m = d.finalMonth;
+                if (m === undefined || m < 0 || m > 11 || isNaN(m)) {
+                    m = currentMonthFilter ? parseInt(currentMonthFilter.split('-')[1], 10) - 1 : new Date().getMonth();
+                }
+
                 if (m >= 0 && m <= 11) {
                     let type = String(d.col3 || '').trim();
-                    if (type.includes('3')) counts03[m]++;
-                    if (type.includes('5')) counts05[m]++;
+                    if (type === '03' || type === '3') counts03[m]++;
+                    else if (type === '05' || type === '5') counts05[m]++;
                     monthlyTotals[m]++;
                 }
             });
@@ -590,8 +575,8 @@
             }
             
             const validMonthData = (data || []).filter(d => (d.col1 && d.col1.trim() !== '') || (d.col4 && d.col4.trim() !== ''));
-            const rows03 = validMonthData.filter(d => String(d.col3 || '').trim().includes('3'));
-            const rows05 = validMonthData.filter(d => String(d.col3 || '').trim().includes('5'));
+            const rows03 = validMonthData.filter(d => String(d.col3 || '').trim() === '03' || String(d.col3 || '').trim() === '3');
+            const rows05 = validMonthData.filter(d => String(d.col3 || '').trim() === '05' || String(d.col3 || '').trim() === '5');
 
             if(document.getElementById('stat-month-03-total')) {
                 document.getElementById('stat-month-03-total').innerText = rows03.length;
@@ -700,13 +685,13 @@
             }
 
             data.forEach((row, rowIndex) => {
-            const tr = document.createElement('tr'); tr.className = `border-b border-white/5 hover:bg-white/[0.05] ${rowIndex % 2 === 0 ? 'bg-transparent' : 'bg-white/[0.02]'}`;
-            columns.forEach(colKey => {
-                const td = document.createElement('td'); 
-                td.className = 'border-r border-white/5 p-0 h-14 ' + (colKey === 'col4' ? 'sticky-col' : 'relative');
-                
-                let isAlert = false;
-                if (colKey === 'col13' && row[colKey] && row['col6'] !== 'เสร็จสิ้น') {
+                const tr = document.createElement('tr'); tr.className = `border-b border-white/5 hover:bg-white/[0.05] ${rowIndex % 2 === 0 ? 'bg-transparent' : 'bg-white/[0.02]'}`;
+                columns.forEach(colKey => {
+                    const td = document.createElement('td'); 
+                    td.className = 'border-r border-white/5 p-0 h-14 ' + (colKey === 'col4' ? 'sticky-col' : '');
+                    
+                    let isAlert = false;
+                    if (colKey === 'col13' && row[colKey] && row['col6'] !== 'เสร็จสิ้น') {
                         const dueDate = new Date(row[colKey]);
                         const today = new Date();
                         today.setHours(0,0,0,0);
@@ -717,12 +702,12 @@
                     let input; 
                     let baseClass = 'w-full h-full py-3 px-4 bg-transparent text-sm outline-none transition-all ';
                     if (isAlert && colKey === 'col13') baseClass += 'bg-rose-900/60 text-pink-300 font-bold focus:bg-rose-900/80 focus:ring-1 focus:ring-rose-400';
-                    else baseClass += 'text-slate-300 focus:bg-[#0c162d] focus:ring-1 focus:ring-cib-yellow/50';
+                    else baseClass += 'focus:bg-[#0c162d] focus:ring-1 focus:ring-cib-yellow/50 ';
                     
                     if (colKey === 'col1' || colKey === 'col8' || colKey === 'col13') { 
-                        input = document.createElement('input'); input.type = 'date'; input.value = row[colKey] || ''; input.className = baseClass; 
+                        input = document.createElement('input'); input.type = 'date'; input.value = row[colKey] || ''; input.className = baseClass + 'text-slate-300'; 
                     } else if (['col3','col5','col6','col9','col10','col11','col12', 'col14', 'col18'].includes(colKey)) {
-                        input = document.createElement('select'); input.className = baseClass + ' custom-select';
+                        input = document.createElement('select'); input.className = baseClass + 'custom-select';
                         let opts = [''];
                         if(colKey==='col3') opts=['','03','05']; 
                         if(colKey==='col5') opts=['','พี่ยอด','เบียร์','ตุ๋น','วาวา','สุ','นาว']; 
@@ -741,12 +726,34 @@
                             if(cellVal === String(v)) o.selected=true; 
                             input.appendChild(o); 
                         });
+
+                        if (colKey === 'col6') {
+                            let val = row[colKey];
+                            if (val === 'เสร็จสิ้น') input.classList.add('text-emerald-400', 'font-bold');
+                            else if (val === 'อยู่ระหว่างดำเนินการ') input.classList.add('text-cib-yellow', 'font-bold');
+                            else if (val === 'ตั้งแท่น') input.classList.add('text-pink-400', 'font-bold');
+                            else input.classList.add('text-slate-300');
+                        } else {
+                            input.classList.add('text-slate-300');
+                        }
+
                     } else { 
-                        input = document.createElement('input'); input.type = 'text'; input.value = row[colKey]||''; input.className = baseClass + (colKey==='col4'?' text-white font-medium':''); 
+                        input = document.createElement('input'); input.type = 'text'; input.value = row[colKey]||''; input.className = baseClass + (colKey==='col4'?' text-white font-medium':'text-slate-300'); 
                     }
 
                     let orig = row[colKey]||''; input.addEventListener('focus', function(){ orig=this.value; });
-                    input.addEventListener(input.tagName==='SELECT'?'change':'blur', function(){ simulateSave(row.id, colKey, this.value, orig); });
+                    input.addEventListener(input.tagName==='SELECT'?'change':'blur', function(){ 
+                        
+                        if (colKey === 'col6') {
+                            this.classList.remove('text-emerald-400', 'text-cib-yellow', 'text-pink-400', 'text-slate-300', 'font-bold');
+                            if (this.value === 'เสร็จสิ้น') this.classList.add('text-emerald-400', 'font-bold');
+                            else if (this.value === 'อยู่ระหว่างดำเนินการ') this.classList.add('text-cib-yellow', 'font-bold');
+                            else if (this.value === 'ตั้งแท่น') this.classList.add('text-pink-400', 'font-bold');
+                            else this.classList.add('text-slate-300');
+                        }
+
+                        simulateSave(row.id, colKey, this.value, orig); 
+                    });
                     td.appendChild(input); tr.appendChild(td);
                 });
                 
