@@ -71,7 +71,7 @@
 
     <div id="pin-screen" class="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-dark-bg/95 backdrop-blur-xl transition-opacity duration-500 p-4">
         <div class="flex gap-4 md:gap-5 mb-8">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Royal_Thai_Police_Emblem.svg/1200px-Royal_Thai_Police_Emblem.svg.png" referrerpolicy="no-referrer" onerror="this.src='https://via.placeholder.com/150'" alt="CIB" class="w-20 h-20 md:w-24 md:h-24 rounded-2xl shadow-glow-blue border border-[#1e325c] object-cover bg-dark-bg p-1">
+            <img src="cib-logo.png" onerror="this.src='https://placehold.co/150x040914/FFC72C?text=CIB'" alt="CIB" class="w-20 h-20 md:w-24 md:h-24 rounded-2xl shadow-glow-blue border border-[#1e325c] object-cover bg-dark-bg p-1">
         </div>
         <div id="pin-box" class="glass-panel p-6 md:p-10 rounded-3xl shadow-[0_0_50px_rgba(0,0,0,0.5)] border border-white/10 flex flex-col items-center w-full max-w-sm transform transition-all relative overflow-hidden">
             <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-cib-yellow to-transparent opacity-50"></div>
@@ -98,7 +98,7 @@
             <div class="p-8 flex flex-col items-center justify-center mt-2 relative">
                 <div class="absolute top-0 w-full h-[1px] bg-gradient-to-r from-transparent via-dark-border to-transparent"></div>
                 <div class="flex gap-3 mb-6 relative">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Royal_Thai_Police_Emblem.svg/1200px-Royal_Thai_Police_Emblem.svg.png" referrerpolicy="no-referrer" onerror="this.src='https://via.placeholder.com/150'" class="w-14 h-14 rounded-2xl border border-[#1e325c] object-cover bg-dark-bg relative z-10 p-1">
+                    <img src="cib-logo.png" onerror="this.src='https://placehold.co/150x040914/FFC72C?text=CIB'" class="w-14 h-14 rounded-2xl border border-[#1e325c] object-cover bg-dark-bg relative z-10 p-1">
                 </div>
                 <h2 class="text-xl font-heading font-bold text-cib-yellow text-center tracking-wide">เอกสาร ฝอ.</h2>
             </div>
@@ -123,7 +123,7 @@
                 <div id="page-dashboard" class="fade-in block max-w-7xl mx-auto">
                     <div class="flex flex-col items-center py-6 mb-8 relative">
                         <div class="flex gap-6 mb-8 z-10">
-                            <a href="https://www.cib.go.th/" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Royal_Thai_Police_Emblem.svg/1200px-Royal_Thai_Police_Emblem.svg.png" referrerpolicy="no-referrer" onerror="this.src='https://via.placeholder.com/150'" class="w-28 h-28 rounded-[2rem] border border-[#1e325c] object-cover bg-dark-bg hover:scale-105 transition-transform p-2"></a>
+                            <a href="https://www.cib.go.th/" target="_blank"><img src="tcsd-logo.png" onerror="this.src='https://placehold.co/150x040914/FFC72C?text=TCSD'" class="w-28 h-28 rounded-[2rem] border border-[#1e325c] object-cover bg-dark-bg hover:scale-105 transition-transform p-2"></a>
                         </div>
                         <h1 class="text-2xl md:text-5xl font-heading font-bold text-white text-center mb-6">ฝอ.(งานป้องกันปราบปราม,ยุทธศาสตร์) บก.ปอท.</h1>
                         
@@ -318,7 +318,7 @@
         </div>
     </div>
 
-    <!-- 📝 Text Edit Popover (กล่องลอยขนาดเล็กสำหรับแก้ไขเรื่อง) -->
+    <!-- 📝 Text Edit Popover -->
     <div id="textEditModal" class="fixed z-[120] hidden opacity-0 transition-opacity duration-200 shadow-2xl">
         <div class="bg-dark-panel border border-cib-yellow/50 rounded-2xl p-4 w-[400px] flex flex-col shadow-[0_10px_40px_rgba(0,0,0,0.8)]">
             <div class="flex justify-between items-center mb-3">
@@ -336,6 +336,9 @@
             </div>
         </div>
     </div>
+
+    <!-- 📌 Custom Tooltip -->
+    <div id="customTooltip" style="z-index: 99999;" class="fixed hidden opacity-0 transition-opacity duration-200 bg-[#112240] border-2 border-[#FFC72C] rounded-xl p-3 md:p-4 shadow-[0_10px_50px_rgba(0,0,0,0.9)] text-white text-sm font-medium max-w-[300px] md:max-w-md pointer-events-none leading-relaxed break-words whitespace-normal"></div>
 
     <script>
         // =========================================================
@@ -356,13 +359,16 @@
         let dailyLineChart = null;
         
         let currentDeleteId = null;
+        
+        // 🌟 ตัวแปรสำหรับป้องกัน Tooltip กระพริบ
+        let tooltipTimeoutId = null; 
 
         // ซ่อนเมนูตัวเลือกหลายข้อถ้าคลิกที่อื่น
         document.addEventListener('click', (e) => {
             document.querySelectorAll('.custom-multiselect-menu').forEach(m => m.classList.add('hidden'));
         });
 
-        // 🌟 ดักการคลิกพื้นที่ว่างเพื่อปิดกล่องแก้ไขข้อความ
+        // ดักการคลิกพื้นที่ว่างเพื่อปิดกล่องแก้ไขข้อความ
         document.addEventListener('mousedown', function(e) {
             const modal = document.getElementById('textEditModal');
             if (modal && !modal.classList.contains('hidden') && !modal.contains(e.target)) {
@@ -910,17 +916,17 @@
                         updateButtonLabel(selectedVals);
                         
                         const menu = document.createElement('div');
-                        menu.className = 'custom-multiselect-menu absolute left-0 top-full mt-1 w-64 bg-dark-panel border border-dark-border rounded-xl shadow-2xl p-3 space-y-2 hidden z-50 max-h-60 overflow-y-auto custom-scrollbar';
+                        menu.className = 'custom-multiselect-menu absolute left-0 top-full mt-1 w-80 bg-dark-panel border border-dark-border rounded-xl shadow-2xl p-3 space-y-2 hidden z-50 max-h-60 overflow-y-auto custom-scrollbar';
                         
                         let selectAllCheckbox = null; let checkboxes = [];
 
                         if (colKey === 'col14' || colKey === 'col15') {
                             const selectAllLabel = document.createElement('label'); selectAllLabel.className = 'flex items-center gap-2 px-2 py-2 rounded-lg hover:bg-white/[0.05] cursor-pointer text-cib-yellow text-sm select-none font-bold border-b border-white/10 mb-2';
-                            selectAllCheckbox = document.createElement('input'); selectAllCheckbox.type = 'checkbox'; selectAllCheckbox.className = 'rounded border-slate-600 text-cib-yellow focus:ring-cib-yellow bg-transparent w-4 h-4 cursor-pointer'; selectAllCheckbox.checked = isAllSelected;
+                            selectAllCheckbox = document.createElement('input'); selectAllCheckbox.type = 'checkbox'; selectAllCheckbox.className = 'rounded border-slate-600 text-cib-yellow focus:ring-cib-yellow bg-transparent w-4 h-4 cursor-pointer shrink-0'; selectAllCheckbox.checked = isAllSelected;
                             selectAllLabel.appendChild(selectAllCheckbox); selectAllLabel.appendChild(document.createTextNode('เลือกทั้งหมด (Select All)')); menu.appendChild(selectAllLabel);
                         }
                         
-                        let otherTextInput = null; // ตัวแปรเก็บช่องพิมพ์ข้อความ
+                        let otherTextInput = null; 
 
                         const handleSelectionChange = () => {
                             let checkedBoxes = checkboxes.filter(cb => cb.checked).map(cb => cb.value);
@@ -928,8 +934,8 @@
                             
                             let saveValues = checkedBoxes.map(val => {
                                 if (colKey === 'col18' && val === 'หน่วยอื่น' && otherTextInput) {
-                                    let txt = otherTextInput.value.trim().replace(/,/g, ' '); // ป้องกันลูกน้ำเพื่อไม่ให้ระบบแบ่งคำพัง
-                                    customOtherText = txt; // อัปเดตเพื่อแสดงในปุ่ม
+                                    let txt = otherTextInput.value.trim().replace(/,/g, ' '); 
+                                    customOtherText = txt; 
                                     return txt ? `หน่วยอื่น: ${txt}` : 'หน่วยอื่น';
                                 }
                                 return val;
@@ -944,10 +950,9 @@
 
                         opts.forEach(opt => {
                             const label = document.createElement('label'); label.className = 'flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-white/[0.05] cursor-pointer text-slate-200 text-sm select-none';
-                            const checkbox = document.createElement('input'); checkbox.type = 'checkbox'; checkbox.className = 'rounded border-slate-600 text-cib-yellow focus:ring-cib-yellow bg-transparent w-4 h-4 cursor-pointer'; checkbox.value = opt; checkbox.checked = selectedVals.includes(opt); checkboxes.push(checkbox);
+                            const checkbox = document.createElement('input'); checkbox.type = 'checkbox'; checkbox.className = 'rounded border-slate-600 text-cib-yellow focus:ring-cib-yellow bg-transparent w-4 h-4 cursor-pointer shrink-0'; checkbox.value = opt; checkbox.checked = selectedVals.includes(opt); checkboxes.push(checkbox);
                             
                             checkbox.addEventListener('change', () => {
-                                // เปิด/ปิด ช่องพิมพ์เมื่อติ๊ก "หน่วยอื่น"
                                 if (colKey === 'col18' && opt === 'หน่วยอื่น' && otherTextInput) {
                                     otherTextInput.disabled = !checkbox.checked;
                                     if (!checkbox.checked) {
@@ -958,20 +963,24 @@
                                 handleSelectionChange();
                             });
 
-                            label.appendChild(checkbox); label.appendChild(document.createTextNode(opt)); 
+                            label.appendChild(checkbox); 
                             
-                            // 🌟 ถ้าเป็น "หน่วยอื่น" ให้ต่อท้ายด้วยช่อง Input
+                            const optTextSpan = document.createElement('span');
+                            optTextSpan.className = 'whitespace-nowrap shrink-0';
+                            optTextSpan.innerText = opt;
+                            label.appendChild(optTextSpan); 
+                            
                             if (colKey === 'col18' && opt === 'หน่วยอื่น') {
                                 otherTextInput = document.createElement('input');
                                 otherTextInput.type = 'text';
-                                otherTextInput.className = 'ml-2 flex-1 bg-[#0c162d] border border-dark-border rounded px-2 py-0.5 text-xs text-white outline-none focus:border-cib-yellow disabled:opacity-30 disabled:cursor-not-allowed';
+                                otherTextInput.className = 'ml-2 w-full min-w-[120px] bg-[#0c162d] border border-dark-border rounded px-2 py-1 text-xs text-white outline-none focus:border-cib-yellow disabled:opacity-30 disabled:cursor-not-allowed';
                                 otherTextInput.placeholder = 'ระบุชื่อหน่วย...';
                                 otherTextInput.value = customOtherText;
                                 otherTextInput.disabled = !checkbox.checked;
                                 
-                                otherTextInput.addEventListener('click', (e) => e.stopPropagation()); // กันไม่ให้คลิกแล้วไปทับติ๊กถูก
+                                otherTextInput.addEventListener('click', (e) => e.stopPropagation()); 
                                 otherTextInput.addEventListener('input', () => {
-                                    if (checkbox.checked) handleSelectionChange(); // บันทึกอัตโนมัติเมื่อพิมพ์
+                                    if (checkbox.checked) handleSelectionChange(); 
                                 });
                                 
                                 label.appendChild(otherTextInput);
@@ -993,18 +1002,73 @@
                         const arrow = document.createElement('div'); arrow.className = 'absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-500'; arrow.innerHTML = '<i data-lucide="chevron-down" class="w-4 h-4"></i>';
                         wrapper.appendChild(btn); wrapper.appendChild(arrow); wrapper.appendChild(menu); td.appendChild(wrapper);
 
+                    // 🔻 จัดการช่องทางแจ้ง (col11) 
+                    } else if (colKey === 'col11') {
+                        const wrapper = document.createElement('div');
+                        wrapper.className = 'w-full h-full flex flex-col justify-center px-2 py-1 gap-1';
+                        
+                        const select = document.createElement('select');
+                        select.className = 'w-full bg-transparent text-sm text-slate-300 outline-none custom-select focus:bg-[#0c162d] rounded p-1.5';
+                        
+                        const opts = ['','QR Code','E-mail','อื่นๆ'];
+                        let rawValue = row[colKey] || '';
+                        let isOther = rawValue.startsWith('อื่นๆ');
+                        let customText = isOther ? rawValue.replace('อื่นๆ:', '').trim() : '';
+                        
+                        opts.forEach(v => { 
+                            const o = document.createElement('option'); o.value = v; o.text = v || '-'; o.className = 'bg-dark-panel text-slate-200';
+                            if ((isOther && v === 'อื่นๆ') || (!isOther && rawValue === String(v))) o.selected = true;
+                            select.appendChild(o); 
+                        });
+
+                        const textInput = document.createElement('input');
+                        textInput.type = 'text';
+                        textInput.className = 'w-full bg-[#0c162d] border border-dark-border rounded px-2 py-1 text-xs text-white outline-none focus:border-cib-yellow transition-all ' + (isOther ? 'block' : 'hidden');
+                        textInput.placeholder = 'ระบุช่องทาง...';
+                        textInput.value = customText;
+
+                        let orig = rawValue;
+                        const saveCol11 = () => {
+                            let newVal = select.value;
+                            if (newVal === 'อื่นๆ') {
+                                let txt = textInput.value.trim();
+                                newVal = txt ? `อื่นๆ: ${txt}` : 'อื่นๆ';
+                            }
+                            simulateSave(row.id, colKey, newVal, orig);
+                            orig = newVal;
+                        };
+
+                        select.addEventListener('change', function() {
+                            if (this.value === 'อื่นๆ') {
+                                textInput.classList.remove('hidden');
+                                textInput.classList.add('block');
+                                textInput.focus();
+                            } else {
+                                textInput.classList.add('hidden');
+                                textInput.classList.remove('block');
+                                textInput.value = '';
+                            }
+                            saveCol11();
+                        });
+
+                        textInput.addEventListener('blur', saveCol11);
+                        textInput.addEventListener('keydown', (e) => { if(e.key === 'Enter') textInput.blur(); });
+
+                        wrapper.appendChild(select);
+                        wrapper.appendChild(textInput);
+                        td.appendChild(wrapper);
+
                     // 🔻 จัดการ dropdown ปกติ
-                    } else if (['col3','col5','col6','col9','col10','col11','col12', 'col16', 'col17', 'col19'].includes(colKey)) {
+                    } else if (['col3','col5','col6','col9','col10','col12', 'col16', 'col17', 'col19'].includes(colKey)) {
                         input = document.createElement('select'); input.className = baseClass + 'custom-select';
                         let opts = [''];
                         if(colKey==='col3') opts=['','03','05']; 
                         if(colKey==='col5') opts=['','พี่ยอด','เบียร์','ตุ๋น','วาวา','สุ','บุ๋ม']; 
-                        if(colKey==='col6') opts=['','อยู่ระหว่างดำเนินการ','เสร็จสิ้น']; // เอาตั้งแท่นออกตามที่เคยขอ
+                        if(colKey==='col6') opts=['','อยู่ระหว่างดำเนินการ','เสร็จสิ้น']; 
                         if(colKey==='col9') opts=['','ประชุม','ไม่ประชุม']; 
                         if(colKey==='col10') opts=['','รองพิเซษฐ์','รองจักรกริช','รองกฤษฎาพร','รองณภัชนันธ์'];
-                        if(colKey==='col11') opts=['','QR Code','E-mail','-']; 
                         if(colKey==='col12') opts=['','ตอบรับ','ยังไม่ตอบรับ','-'];
-                        if(colKey==='col16') opts=['','ตั้งแท่น','อยู่ระหว่างนำเสนอ','เสร็จสิ้น']; // มีตั้งแท่น
+                        if(colKey==='col16') opts=['','ตั้งแท่น','อยู่ระหว่างนำเสนอ','เสร็จสิ้น']; 
                         if(colKey==='col17') opts=['','ตั้งแท่น','อยู่ระหว่างนำเสนอ','เสร็จสิ้น'];
                         if(colKey==='col19') opts=['','เพื่อทราบ','เพื่อดำเนินการ'];
                         
@@ -1049,18 +1113,62 @@
                         });
                         td.appendChild(input);
 
-                    // 📝 จัดการข้อความทั่วไป
+                    // 📝 จัดการข้อความทั่วไป & Tooltip (แก้ไขบักกระพริบ)
                     } else { 
                         input = document.createElement('input'); input.type = 'text'; input.value = row[colKey]||''; 
                         
                         if (colKey === 'col4') {
-                            input.className = baseClass + ' text-white font-medium cursor-pointer hover:bg-white/[0.05]';
-                            input.readOnly = true; // ล็อคไม่ให้พิมพ์ตรงๆ
+                            input.className = baseClass + ' text-white font-medium cursor-pointer hover:bg-white/[0.05] truncate';
+                            input.readOnly = true; 
                             
-                            // 🌟 เมื่อคลิกที่ช่อง ให้เปิดหน้าต่างป๊อปอัปพิมพ์ข้อความยาวขึ้นมาแทน
+                            // 🌟 เมื่อคลิกเปิดแก้ไข ให้ลบ Tooltip ออกไปเลย
                             input.addEventListener('click', function(e) {
                                 e.stopPropagation(); 
                                 openTextEditModal(row.id, colKey, row[colKey] || '', this);
+                                
+                                clearTimeout(tooltipTimeoutId); // หยุดซ่อน
+                                const tooltip = document.getElementById('customTooltip');
+                                tooltip.classList.add('opacity-0', 'hidden');
+                            });
+
+                            // 🌟 แสดง Tooltip (เคลียร์ Timeout ก่อนเสมอ ป้องกันบั๊ก)
+                            input.addEventListener('mouseenter', function(e) {
+                                const val = this.value; 
+                                if (val && val.trim() !== '') {
+                                    clearTimeout(tooltipTimeoutId); // ยกเลิกการซ่อนจากกล่องเก่า
+                                    
+                                    const tooltip = document.getElementById('customTooltip');
+                                    tooltip.innerText = val;
+                                    tooltip.classList.remove('hidden');
+                                    
+                                    // ประมวลผลตำแหน่งทันที ไม่รอ setTimeout ยาวๆ
+                                    requestAnimationFrame(() => {
+                                        const rect = this.getBoundingClientRect();
+                                        const tooltipRect = tooltip.getBoundingClientRect();
+                                        
+                                        let top = rect.bottom + 5; 
+                                        let left = rect.left + 20; 
+                                        
+                                        if (top + tooltipRect.height > window.innerHeight) top = rect.top - tooltipRect.height - 5;
+                                        if (left + tooltipRect.width > window.innerWidth) left = window.innerWidth - tooltipRect.width - 20;
+                                        
+                                        tooltip.style.top = top + 'px';
+                                        tooltip.style.left = left + 'px';
+                                        
+                                        tooltip.classList.remove('opacity-0');
+                                    });
+                                }
+                            });
+                            
+                            // 🌟 ซ่อน Tooltip (ตั้งเวลาดีเลย์ซ่อน 200ms)
+                            input.addEventListener('mouseleave', function() {
+                                const tooltip = document.getElementById('customTooltip');
+                                tooltip.classList.add('opacity-0');
+                                
+                                clearTimeout(tooltipTimeoutId); // ยกเลิกตัวเก่าก่อนสร้างตัวใหม่
+                                tooltipTimeoutId = setTimeout(() => {
+                                    tooltip.classList.add('hidden');
+                                }, 200); 
                             });
                             
                         } else {
