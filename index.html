@@ -94,6 +94,7 @@
     </div>
 
     <div id="app-wrapper" class="flex w-full h-full opacity-0 pointer-events-none transition-opacity duration-500 z-10 relative">
+        <!-- Sidebar -->
         <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-72 bg-[#040914]/95 backdrop-blur-xl border-r border-dark-border transform -translate-x-full md:translate-x-0 transition-transform duration-300 shadow-2xl md:static md:flex md:flex-col">
             <div class="p-8 flex flex-col items-center justify-center mt-2 relative">
                 <div class="absolute top-0 w-full h-[1px] bg-gradient-to-r from-transparent via-dark-border to-transparent"></div>
@@ -119,7 +120,6 @@
             </header>
 
             <div class="flex-1 min-h-0 overflow-y-auto custom-scrollbar p-4 md:p-8 pb-32">
-                <!-- Dashboard Page -->
                 <div id="page-dashboard" class="fade-in block max-w-7xl mx-auto">
                     <div class="flex flex-col items-center py-6 mb-8 relative">
                         <div class="flex gap-6 mb-8 z-10">
@@ -289,6 +289,7 @@
                                         <th class="py-4 px-4 text-sm font-heading font-medium text-slate-300 border-r min-w-[180px]">ผู้เข้าประชุม</th>
                                         <th class="py-4 px-4 text-sm font-heading font-medium text-slate-300 border-r min-w-[140px]">ช่องทางแจ้ง</th>
                                         <th class="py-4 px-4 text-sm font-heading font-medium text-slate-300 border-r min-w-[140px]">สถานะช่องทางแจ้ง</th>
+                                        <th class="py-4 px-4 text-sm font-heading font-medium text-slate-300 border-r min-w-[140px]">จัดเก็บเอกสาร</th>
                                         <th class="py-4 px-4 text-sm text-rose-400 text-center w-20">ลบ</th>
                                     </tr>
                                 </thead>
@@ -343,12 +344,13 @@
     <script>
         // =========================================================
         // 🛑 นำ URL จาก Google Apps Script มาวางที่นี่ 🛑
-        const GOOGLE_SHEET_URL = 'https://script.google.com/macros/s/AKfycbxK88jx6aue41eO_tHDf84vegGg6h9KA4_bdzxpBDMNqzARzpy5lJdzmZneyyaRz_tG/exec'; 
+        const GOOGLE_SHEET_URL = 'https://script.google.com/macros/s/AKfycbx8K-a-YUd939Jch3npK2gXE2zLr-OGVXbzia82j-yvRSyUS3s-5HGd3hHxGx3KihYI/exec'; 
         // =========================================================
 
         let data = []; 
         let yearlyData = []; 
-        const columns = ['col1', 'col2', 'col3', 'col4', 'col5', 'col14', 'col19', 'col15', 'col13', 'col16', 'col17', 'col18', 'col6', 'col7', 'col8', 'col9', 'col10', 'col11', 'col12'];
+        // อัปเดต Array คอลัมน์ ให้รวม col20 ด้วย
+        const columns = ['col1', 'col2', 'col3', 'col4', 'col5', 'col14', 'col19', 'col15', 'col13', 'col16', 'col17', 'col18', 'col6', 'col7', 'col8', 'col9', 'col10', 'col11', 'col12', 'col20'];
         let saveTimeout; 
         let currentMonthFilter = ''; 
         let currentYearFilter = '';
@@ -359,16 +361,12 @@
         let dailyLineChart = null;
         
         let currentDeleteId = null;
-        
-        // 🌟 ตัวแปรสำหรับป้องกัน Tooltip กระพริบ
         let tooltipTimeoutId = null; 
 
-        // ซ่อนเมนูตัวเลือกหลายข้อถ้าคลิกที่อื่น
         document.addEventListener('click', (e) => {
             document.querySelectorAll('.custom-multiselect-menu').forEach(m => m.classList.add('hidden'));
         });
 
-        // ดักการคลิกพื้นที่ว่างเพื่อปิดกล่องแก้ไขข้อความ
         document.addEventListener('mousedown', function(e) {
             const modal = document.getElementById('textEditModal');
             if (modal && !modal.classList.contains('hidden') && !modal.contains(e.target)) {
@@ -424,7 +422,7 @@
         }
 
         function loadDummyData() {
-            if(data.length === 0) data = [{ id: 1, col1: '', col2: '', col3: '', col4: '', col5: '', col14: '', col19: '', col15: '', col13: '', col16: '', col17: '', col18: '', col6: '', col7: '', col8: '', col9: '', col10: '', col11: '', col12: '' }];
+            if(data.length === 0) data = [{ id: 1, col1: '', col2: '', col3: '', col4: '', col5: '', col14: '', col19: '', col15: '', col13: '', col16: '', col17: '', col18: '', col6: '', col7: '', col8: '', col9: '', col10: '', col11: '', col12: '', col20: '' }];
             finishLoading();
         }
 
@@ -727,7 +725,7 @@
             if (newValue === originalValue) return;
             const row = data.find(r => r.id === rowId);
             if (row) { row[colKey] = newValue; } else { 
-                let newRow = { id: rowId, col1: '', col2: '', col3: '', col4: '', col5: '', col14: '', col15: '', col13: '', col16: '', col17: '', col18: '', col6: '', col7: '', col8: '', col9: '', col10: '', col11: '', col12: '' }; 
+                let newRow = { id: rowId, col1: '', col2: '', col3: '', col4: '', col5: '', col14: '', col15: '', col13: '', col16: '', col17: '', col18: '', col6: '', col7: '', col8: '', col9: '', col10: '', col11: '', col12: '', col20: '' }; 
                 newRow[colKey] = newValue; data.push(newRow); 
             }
             
@@ -811,14 +809,14 @@
                 const originalValue = row[currentEditingColKey] || '';
                 if (newValue !== originalValue) {
                     simulateSave(currentEditingRowId, currentEditingColKey, newValue, originalValue);
-                    renderTable(); // รีเฟรชตาราง
+                    renderTable(); 
                 }
             }
             closeTextEditModal();
         }
 
         function addNewRow() {
-            const newRow = { id: Date.now() + Math.random(), col1: '', col2: '', col3: '', col4: '', col5: '', col14: '', col15: '', col13: '', col16: '', col17: '', col18: '', col6: '', col7: '', col8: '', col9: '', col10: '', col11: '', col12: '' };
+            const newRow = { id: Date.now() + Math.random(), col1: '', col2: '', col3: '', col4: '', col5: '', col14: '', col15: '', col13: '', col16: '', col17: '', col18: '', col6: '', col7: '', col8: '', col9: '', col10: '', col11: '', col12: '', col20: '' };
             data.push(newRow); renderTable();
             const scrollContainer = document.querySelector('.overflow-y-auto.custom-scrollbar');
             if (scrollContainer) setTimeout(() => scrollContainer.scrollTo({ top: scrollContainer.scrollHeight, behavior: 'smooth' }), 50);
@@ -830,7 +828,7 @@
             let filteredRows = data;
             if (filteredRows.length < 10) { 
                 for (let i = 0; i < (10 - filteredRows.length); i++) { 
-                    const newRow = { id: Date.now() + Math.random(), col1: '', col2: '', col3: '', col4: '', col5: '', col14: '', col15: '', col13: '', col16: '', col17: '', col18: '', col6: '', col7: '', col8: '', col9: '', col10: '', col11: '', col12: '' }; 
+                    const newRow = { id: Date.now() + Math.random(), col1: '', col2: '', col3: '', col4: '', col5: '', col14: '', col15: '', col13: '', col16: '', col17: '', col18: '', col6: '', col7: '', col8: '', col9: '', col10: '', col11: '', col12: '', col20: '' }; 
                     data.push(newRow); 
                 } 
             }
@@ -854,7 +852,6 @@
                     if (isAlert && colKey === 'col13') baseClass += 'bg-rose-900/60 text-pink-300 font-bold focus:bg-rose-900/80 focus:ring-1 focus:ring-rose-400';
                     else baseClass += 'focus:bg-[#0c162d] focus:ring-1 focus:ring-cib-yellow/50 ';
                     
-                    // 📅 จัดการช่องวันที่
                     if (colKey === 'col1' || colKey === 'col8' || colKey === 'col13') { 
                         input = document.createElement('input'); input.type = 'date'; 
                         let dateVal = row[colKey] || '';
@@ -874,18 +871,18 @@
                         input.addEventListener('change', function() { simulateSave(row.id, colKey, this.value, orig); this.blur(); });
                         td.appendChild(input);
 
-                    // 🔘 จัดการป๊อปอัปเลือกหลายอัน (Multiselect)
                     } else if (['col14', 'col15', 'col18'].includes(colKey)) {
                         const wrapper = document.createElement('div'); wrapper.className = 'relative w-full h-full flex items-center';
                         const btn = document.createElement('button'); btn.className = baseClass + ' text-left flex items-center justify-between pr-8 truncate text-slate-300';
                         
                         let opts = [];
-                        if (colKey === 'col14' || colKey === 'col15') opts = ['ฝอ.บก.ปอท.', 'กก.1 บก.ปอท.', 'กก.2 บก.ปอท.', 'กก.3 บก.ปอท.', 'กลุ่มงานสนับสนุนฯ'];
+                        const selectAllGroup = ['กก.1 บก.ปอท.', 'กก.2 บก.ปอท.', 'กก.3 บก.ปอท.', 'กลุ่มงานสนับสนุนฯ'];
+                        
+                        if (colKey === 'col14' || colKey === 'col15') opts = ['ฝอ.บก.ปอท.', ...selectAllGroup];
                         if (colKey === 'col18') opts = ['ฝ.3 บก.อก.บช.ก.', 'ฝ.5 บก.อก.บช.ก.', 'ฝ.7 บก.อก.บช.ก.', 'ฝ.8 บก.อก.บช.ก.', 'บก.อก.บช.ก.', 'บช.ก.', 'หน่วยอื่น'];
                         
                         let rawValue = row[colKey] || ''; 
                         
-                        // ดักจับข้อความที่ถูกพิมพ์เพิ่มใน "หน่วยอื่น"
                         let customOtherText = '';
                         let selectedVals = rawValue.split(',').map(s => {
                             let val = s.trim();
@@ -898,16 +895,20 @@
 
                         let isAllSelected = false;
                         if (colKey === 'col14' || colKey === 'col15') {
-                            isAllSelected = selectedVals.includes('ทั้งหมด') || (selectedVals.length > 0 && opts.every(opt => selectedVals.includes(opt)));
-                            if (isAllSelected) selectedVals = [...opts];
+                            if (selectedVals.includes('ทั้งหมด')) {
+                                selectedVals = selectedVals.filter(v => v !== 'ทั้งหมด').concat(selectAllGroup);
+                                selectedVals = [...new Set(selectedVals)];
+                            }
+                            isAllSelected = selectAllGroup.every(opt => selectedVals.includes(opt));
                         }
 
                         const updateButtonLabel = (vals) => {
                             let displayStr = '-';
                             if (vals.length > 0) {
-                                if ((colKey === 'col14' || colKey === 'col15') && vals.length === opts.length) displayStr = 'ทั้งหมด';
-                                else {
-                                    // โชว์ข้อความที่พิมพ์ไว้ในปุ่มด้วย
+                                if ((colKey === 'col14' || colKey === 'col15') && selectAllGroup.every(opt => vals.includes(opt))) {
+                                    let otherSelected = vals.filter(opt => !selectAllGroup.includes(opt));
+                                    displayStr = otherSelected.length > 0 ? 'ทั้งหมด, ' + otherSelected.join(', ') : 'ทั้งหมด';
+                                } else {
                                     displayStr = vals.map(v => (v === 'หน่วยอื่น' && customOtherText) ? `หน่วยอื่น (${customOtherText})` : v).join(', ');
                                 }
                             }
@@ -930,7 +931,7 @@
 
                         const handleSelectionChange = () => {
                             let checkedBoxes = checkboxes.filter(cb => cb.checked).map(cb => cb.value);
-                            if (selectAllCheckbox) selectAllCheckbox.checked = (checkedBoxes.length === opts.length);
+                            if (selectAllCheckbox) selectAllCheckbox.checked = selectAllGroup.every(opt => checkedBoxes.includes(opt));
                             
                             let saveValues = checkedBoxes.map(val => {
                                 if (colKey === 'col18' && val === 'หน่วยอื่น' && otherTextInput) {
@@ -942,7 +943,12 @@
                             });
 
                             let newValue = saveValues.join(', ');
-                            if ((colKey === 'col14' || colKey === 'col15') && checkedBoxes.length === opts.length) newValue = 'ทั้งหมด';
+                            if (colKey === 'col14' || colKey === 'col15') {
+                                if (selectAllGroup.every(opt => checkedBoxes.includes(opt))) {
+                                    let otherSelected = checkedBoxes.filter(opt => !selectAllGroup.includes(opt));
+                                    newValue = otherSelected.length > 0 ? 'ทั้งหมด, ' + otherSelected.join(', ') : 'ทั้งหมด';
+                                }
+                            }
                             
                             updateButtonLabel(checkedBoxes); 
                             simulateSave(row.id, colKey, newValue, row[colKey] || '');
@@ -991,9 +997,22 @@
                         
                         if (selectAllCheckbox) {
                             selectAllCheckbox.addEventListener('change', (e) => {
-                                const isChecked = e.target.checked; checkboxes.forEach(cb => cb.checked = isChecked);
-                                let checkedBoxes = isChecked ? [...opts] : []; const newValue = isChecked ? 'ทั้งหมด' : '';
-                                updateButtonLabel(checkedBoxes); simulateSave(row.id, colKey, newValue, row[colKey] || '');
+                                const isChecked = e.target.checked; 
+                                checkboxes.forEach(cb => {
+                                    if (selectAllGroup.includes(cb.value)) cb.checked = isChecked;
+                                });
+                                let checkedBoxes = checkboxes.filter(cb => cb.checked).map(cb => cb.value);
+                                
+                                let newValue = checkedBoxes.join(', ');
+                                if (colKey === 'col14' || colKey === 'col15') {
+                                    if (selectAllGroup.every(opt => checkedBoxes.includes(opt))) {
+                                        let otherSelected = checkedBoxes.filter(opt => !selectAllGroup.includes(opt));
+                                        newValue = otherSelected.length > 0 ? 'ทั้งหมด, ' + otherSelected.join(', ') : 'ทั้งหมด';
+                                    }
+                                }
+                                
+                                updateButtonLabel(checkedBoxes); 
+                                simulateSave(row.id, colKey, newValue, row[colKey] || '');
                             });
                         }
                         
@@ -1002,7 +1021,6 @@
                         const arrow = document.createElement('div'); arrow.className = 'absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-500'; arrow.innerHTML = '<i data-lucide="chevron-down" class="w-4 h-4"></i>';
                         wrapper.appendChild(btn); wrapper.appendChild(arrow); wrapper.appendChild(menu); td.appendChild(wrapper);
 
-                    // 🔻 จัดการช่องทางแจ้ง (col11) 
                     } else if (colKey === 'col11') {
                         const wrapper = document.createElement('div');
                         wrapper.className = 'w-full h-full flex flex-col justify-center px-2 py-1 gap-1';
@@ -1057,9 +1075,35 @@
                         wrapper.appendChild(select);
                         wrapper.appendChild(textInput);
                         td.appendChild(wrapper);
+                        
+                    } else if (colKey === 'col20') {
+                        const wrapper = document.createElement('div');
+                        wrapper.className = 'w-full h-full flex items-center justify-center p-2';
+                        
+                        const label = document.createElement('label');
+                        label.className = 'flex items-center gap-2 cursor-pointer px-3 py-1.5 rounded-lg hover:bg-white/[0.05] transition-colors';
+                        
+                        const checkbox = document.createElement('input');
+                        checkbox.type = 'checkbox';
+                        checkbox.className = 'rounded border-slate-600 text-emerald-500 focus:ring-emerald-500 bg-transparent w-4 h-4 cursor-pointer shrink-0';
+                        checkbox.checked = row[colKey] === 'เสร็จสิ้น';
+                        
+                        const span = document.createElement('span');
+                        span.className = 'text-sm font-medium transition-colors ' + (checkbox.checked ? 'text-emerald-400' : 'text-slate-400');
+                        span.innerText = 'เสร็จสิ้น';
+                        
+                        checkbox.addEventListener('change', function() {
+                            const val = this.checked ? 'เสร็จสิ้น' : '';
+                            span.className = 'text-sm font-medium transition-colors ' + (this.checked ? 'text-emerald-400' : 'text-slate-400');
+                            simulateSave(row.id, colKey, val, row[colKey] || '');
+                        });
+                        
+                        label.appendChild(checkbox);
+                        label.appendChild(span);
+                        wrapper.appendChild(label);
+                        td.appendChild(wrapper);
 
-                    // 🔻 จัดการ dropdown ปกติ
-                    } else if (['col3','col5','col6','col9','col10','col12', 'col16', 'col17', 'col19'].includes(colKey)) {
+                    } else if (['col3','col5','col6','col9','col10','col12', 'col17', 'col19'].includes(colKey)) {
                         input = document.createElement('select'); input.className = baseClass + 'custom-select';
                         let opts = [''];
                         if(colKey==='col3') opts=['','03','05']; 
@@ -1068,7 +1112,6 @@
                         if(colKey==='col9') opts=['','ประชุม','ไม่ประชุม']; 
                         if(colKey==='col10') opts=['','รองพิเซษฐ์','รองจักรกริช','รองกฤษฎาพร','รองณภัชนันธ์'];
                         if(colKey==='col12') opts=['','ตอบรับ','ยังไม่ตอบรับ','-'];
-                        if(colKey==='col16') opts=['','ตั้งแท่น','อยู่ระหว่างนำเสนอ','เสร็จสิ้น']; 
                         if(colKey==='col17') opts=['','ตั้งแท่น','อยู่ระหว่างนำเสนอ','เสร็จสิ้น'];
                         if(colKey==='col19') opts=['','เพื่อทราบ','เพื่อดำเนินการ'];
                         
@@ -1085,7 +1128,7 @@
                             if (val === 'เสร็จสิ้น') input.classList.add('text-emerald-400', 'font-bold');
                             else if (val === 'อยู่ระหว่างดำเนินการ') input.classList.add('text-cib-yellow', 'font-bold');
                             else input.classList.add('text-slate-300');
-                        } else if (colKey === 'col16' || colKey === 'col17') {
+                        } else if (colKey === 'col17') {
                             let val = row[colKey];
                             if (val === 'เสร็จสิ้น') input.classList.add('text-emerald-400', 'font-bold');
                             else if (val === 'อยู่ระหว่างนำเสนอ') input.classList.add('text-cib-yellow', 'font-bold');
@@ -1102,7 +1145,7 @@
                                 if (this.value === 'เสร็จสิ้น') this.classList.add('text-emerald-400', 'font-bold');
                                 else if (this.value === 'อยู่ระหว่างดำเนินการ') this.classList.add('text-cib-yellow', 'font-bold');
                                 else this.classList.add('text-slate-300');
-                            } else if (colKey === 'col16' || colKey === 'col17') {
+                            } else if (colKey === 'col17') {
                                 this.classList.remove('text-emerald-400', 'text-cib-yellow', 'text-pink-400', 'text-slate-300', 'font-bold');
                                 if (this.value === 'เสร็จสิ้น') this.classList.add('text-emerald-400', 'font-bold');
                                 else if (this.value === 'อยู่ระหว่างนำเสนอ') this.classList.add('text-cib-yellow', 'font-bold');
@@ -1113,7 +1156,6 @@
                         });
                         td.appendChild(input);
 
-                    // 📝 จัดการข้อความทั่วไป & Tooltip (แก้ไขบักกระพริบ)
                     } else { 
                         input = document.createElement('input'); input.type = 'text'; input.value = row[colKey]||''; 
                         
@@ -1121,27 +1163,24 @@
                             input.className = baseClass + ' text-white font-medium cursor-pointer hover:bg-white/[0.05] truncate';
                             input.readOnly = true; 
                             
-                            // 🌟 เมื่อคลิกเปิดแก้ไข ให้ลบ Tooltip ออกไปเลย
                             input.addEventListener('click', function(e) {
                                 e.stopPropagation(); 
                                 openTextEditModal(row.id, colKey, row[colKey] || '', this);
                                 
-                                clearTimeout(tooltipTimeoutId); // หยุดซ่อน
+                                clearTimeout(tooltipTimeoutId); 
                                 const tooltip = document.getElementById('customTooltip');
                                 tooltip.classList.add('opacity-0', 'hidden');
                             });
 
-                            // 🌟 แสดง Tooltip (เคลียร์ Timeout ก่อนเสมอ ป้องกันบั๊ก)
                             input.addEventListener('mouseenter', function(e) {
                                 const val = this.value; 
                                 if (val && val.trim() !== '') {
-                                    clearTimeout(tooltipTimeoutId); // ยกเลิกการซ่อนจากกล่องเก่า
+                                    clearTimeout(tooltipTimeoutId); 
                                     
                                     const tooltip = document.getElementById('customTooltip');
                                     tooltip.innerText = val;
                                     tooltip.classList.remove('hidden');
                                     
-                                    // ประมวลผลตำแหน่งทันที ไม่รอ setTimeout ยาวๆ
                                     requestAnimationFrame(() => {
                                         const rect = this.getBoundingClientRect();
                                         const tooltipRect = tooltip.getBoundingClientRect();
@@ -1160,12 +1199,11 @@
                                 }
                             });
                             
-                            // 🌟 ซ่อน Tooltip (ตั้งเวลาดีเลย์ซ่อน 200ms)
                             input.addEventListener('mouseleave', function() {
                                 const tooltip = document.getElementById('customTooltip');
                                 tooltip.classList.add('opacity-0');
                                 
-                                clearTimeout(tooltipTimeoutId); // ยกเลิกตัวเก่าก่อนสร้างตัวใหม่
+                                clearTimeout(tooltipTimeoutId); 
                                 tooltipTimeoutId = setTimeout(() => {
                                     tooltip.classList.add('hidden');
                                 }, 200); 
