@@ -344,7 +344,7 @@
     <script>
         // =========================================================
         // 🛑 นำ URL จาก Google Apps Script มาวางที่นี่ 🛑
-        const GOOGLE_SHEET_URL = 'https://script.google.com/macros/s/AKfycbx8K-a-YUd939Jch3npK2gXE2zLr-OGVXbzia82j-yvRSyUS3s-5HGd3hHxGx3KihYI/exec'; 
+        const GOOGLE_SHEET_URL = 'https://script.google.com/macros/s/AKfycbx0gn_4fzYNQuXiYZGIxX219Y8J-V0D3wH59C0StuK8c8Me-jKHZKIPpALqQiydSBYo/exec'; 
         // =========================================================
 
         let data = []; 
@@ -406,12 +406,21 @@
             });
         }
 
-        function saveDataToGoogleSheet() {
+        // ฟังก์ชันใหม่: ส่งข้อมูลไปเซฟเฉพาะแถวที่อัปเดต
+        function saveRowToGoogleSheet(rowId) {
             if (!GOOGLE_SHEET_URL || GOOGLE_SHEET_URL.includes('ใส่_URL')) {
                 updateStatusUI('error');
                 return Promise.resolve(); 
             }
-            const payload = { month: currentMonthFilter, data: data };
+            const rowData = data.find(r => r.id === rowId);
+            if (!rowData) return Promise.resolve();
+
+            const payload = { 
+                action: 'updateRow', 
+                month: currentMonthFilter, 
+                rowData: rowData 
+            };
+
             return fetch(GOOGLE_SHEET_URL, {
                 method: 'POST',
                 body: JSON.stringify(payload)
@@ -419,6 +428,15 @@
               .then(res => {
                   if(res.status !== 'success') throw new Error('Sheet error');
               });
+        }
+
+        // ฟังก์ชันใหม่: ส่งคำสั่งไปลบเฉพาะแถว
+        function deleteRowFromGoogleSheet(rowId) {
+            if (!GOOGLE_SHEET_URL || GOOGLE_SHEET_URL.includes('ใส่_URL')) return Promise.resolve();
+            const payload = { action: 'deleteRow', month: currentMonthFilter, id: rowId };
+            return fetch(GOOGLE_SHEET_URL, { method: 'POST', body: JSON.stringify(payload) })
+                .then(res => res.json())
+                .then(res => { if(res.status !== 'success') throw new Error('Sheet error'); });
         }
 
         function loadDummyData() {
@@ -737,7 +755,8 @@
             updateStatusUI('saving');
             clearTimeout(saveTimeout);
             saveTimeout = setTimeout(() => {
-                saveDataToGoogleSheet().then(() => {
+                // เรียกใช้ saveRowToGoogleSheet แทนส่งไปทั้งก้อน
+                saveRowToGoogleSheet(rowId).then(() => {
                     updateStatusUI('saved');
                     if (colKey === 'col13' || colKey === 'col6' || colKey === 'col16') renderTable();
                     setTimeout(() => updateStatusUI('idle'), 4000);
@@ -754,7 +773,9 @@
                 yearlyData = yearlyData.filter(r => !(r.id === currentDeleteId && r.sheetMonth === currentMIndex));
                 closeDeleteModal(); renderTable(); updateAllStats();
                 updateStatusUI('saving');
-                saveDataToGoogleSheet().then(() => updateStatusUI('saved')).catch(() => updateStatusUI('error'));
+                
+                // สั่งให้ Sheet ลบเฉพาะแถวนี้ออก
+                deleteRowFromGoogleSheet(currentDeleteId).then(() => updateStatusUI('saved')).catch(() => updateStatusUI('error'));
             }
         }
 
